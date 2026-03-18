@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Wordoo</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Wordoo">
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://use.typekit.net/lel4jfe.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- SPLASH: body-level overlay, covers #app exactly -->
+<div id="screen-splash">
+  <div class="splash-bg"></div>
+  <div class="splash-orb splash-orb1"></div>
+  <div class="splash-orb splash-orb2"></div>
+  <div class="splash-orb splash-orb3"></div>
+  <div class="splash-content">
+    <div class="splash-logo">
+      <span class="logo-word">Word</span><span class="logo-oo">oo</span>
+    </div>
+    <div class="splash-tagline">My words, my pace.</div>
+  </div>
+  <div class="splash-hint">Tap anywhere to begin</div>
+</div>
+
+<div id="app">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="home-hero">
+      <div class="hero-orbs">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+      </div>
+      <div class="hero-top">
+        <div class="logo">
+          <span class="logo-word">Word</span><span class="logo-oo">oo</span>
+        </div>
+        <div class="hero-controls">
+          <button class="ctrl-btn" id="btn-theme">☀</button>
+          <button class="ctrl-btn" id="btn-lang">EN</button>
+          <button class="ctrl-btn" id="btn-profile">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="hero-body">
+        <div class="streak-row">
+          <div class="streak-pill">🔥 <span id="streak-count">0</span> <span data-i18n="streak_unit">天连续</span></div>
+          <div class="goal-pill"><span data-i18n="today">今日</span> <span id="ring-text">0/5</span></div>
+        </div>
+        <div class="hero-title" id="hero-title">今天学<br>几个词？</div>
+        <button class="cta-btn" id="btn-start-quiz">
+          <span data-i18n="start">开始测验</span>
+          <div class="cta-icon">→</div>
+        </button>
+      </div>
+    </div>
+    <div class="home-body">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl" data-i18n="total">单词总数</div></div>
+        <div class="stat-card accent"><div class="stat-num" id="stat-mastered">0</div><div class="stat-lbl" data-i18n="mastered">已掌握</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-wrong">0</div><div class="stat-lbl" data-i18n="wrong">错题</div></div>
+      </div>
+      <div class="nav-grid">
+        <button class="nav-card" id="btn-wordbook">
+          <div class="nav-card-icon">📚</div>
+          <div class="nav-card-label" data-i18n="wordbook">单词本</div>
+        </button>
+        <button class="nav-card" id="btn-wrongbook">
+          <div class="nav-card-icon">🎯</div>
+          <div class="nav-card-label" data-i18n="wrongbook">错题本</div>
+        </button>
+      </div>
+    </div>
+    <footer class="app-footer">© 2026 June Cheng. Built with AI.</footer>
+  </div>
+
+  <!-- WORDBOOK -->
+  <div class="screen" id="screen-wordbook">
+    <div class="nav-bar">
+      <button class="back-btn" data-back="home">‹</button>
+      <span class="nav-title" data-i18n="wordbook">单词本</span>
+      <button class="icon-btn" id="btn-add-word">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="search-input" type="text" placeholder="搜索单词…">
+    </div>
+    <div class="list-wrap" id="word-list"></div>
+    <div class="empty-state" id="empty-words">
+      <div class="empty-emoji">📭</div>
+      <div class="empty-title" data-i18n="no_words">还没有单词</div>
+      <div class="empty-sub" data-i18n="add_hint">点右上角 + 开始添加</div>
+    </div>
+  </div>
+
+  <!-- WRONGBOOK -->
+  <div class="screen" id="screen-wrongbook">
+    <div class="nav-bar">
+      <button class="back-btn" data-back="home">‹</button>
+      <span class="nav-title" data-i18n="wrongbook">错题本</span>
+      <button class="icon-btn red" id="btn-clear-wrong">🗑</button>
+    </div>
+    <div class="list-wrap" id="wrong-list"></div>
+    <div class="empty-state" id="empty-wrong">
+      <div class="empty-emoji">🎉</div>
+      <div class="empty-title" data-i18n="no_wrong">暂无错题</div>
+      <div class="empty-sub" data-i18n="keep_it">继续保持！</div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div class="nav-bar">
+      <button class="back-btn" data-back="home">‹</button>
+      <span class="nav-title" data-i18n="profile_title">我的</span>
+      <div style="width:36px"></div>
+    </div>
+    <div class="profile-wrap">
+      <div class="profile-hero">
+        <div class="avatar">🧙</div>
+        <div class="profile-name">Wordoo</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" id="p-streak">0</div><div class="stat-lbl" data-i18n="streak_lbl">连续天数</div></div>
+        <div class="stat-card accent"><div class="stat-num" id="p-sessions">0</div><div class="stat-lbl" data-i18n="sessions">测验次数</div></div>
+        <div class="stat-card"><div class="stat-num" id="p-accuracy">—</div><div class="stat-lbl" data-i18n="accuracy">正确率</div></div>
+      </div>
+      <div class="section-block">
+        <div class="section-label" data-i18n="daily">每日目标</div>
+        <div class="goal-row">
+          <span class="goal-hint" data-i18n="per_day">每天做</span>
+          <button class="step-btn" id="goal-minus">−</button>
+          <span class="goal-val" id="goal-display">5</span>
+          <button class="step-btn" id="goal-plus">+</button>
+          <span class="goal-hint" data-i18n="qunit">题</span>
+        </div>
+      </div>
+      <div class="section-block">
+        <div class="section-label" data-i18n="history">历史记录</div>
+        <div id="history-list"></div>
+        <div class="empty-state" id="empty-history" style="padding:20px 0">
+          <div class="empty-sub" data-i18n="no_history">完成测验后这里会出现记录</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-nav">
+      <button class="back-btn" data-back="home">✕</button>
+      <div class="prog-track"><div class="prog-fill" id="quiz-prog-fill"></div></div>
+      <span class="prog-label" id="quiz-prog-text">1/5</span>
+      <div class="score-pill" id="quiz-score-badge">0分</div>
+    </div>
+    <div class="quiz-body" id="quiz-body"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="result-wrap" id="result-body"></div>
+  </div>
+
+</div><!-- /#app -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-add" hidden>
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <span class="modal-title" data-i18n="add">添加单词</span>
+      <button class="icon-btn" id="modal-close">✕</button>
+    </div>
+    <label class="field-label"><span data-i18n="word_label">单词</span> <span class="req">*</span></label>
+    <input class="field-input" id="input-word" type="text" placeholder="e.g. ephemeral" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="lookup-status" id="lookup-status"></div>
+    <label class="field-label" data-i18n="meaning_label">释义（自动填入，可修改）</label>
+    <input class="field-input" id="input-meaning" type="text" placeholder="查词中…">
+    <label class="field-label" data-i18n="example_label">例句（可选）</label>
+    <input class="field-input" id="input-example" type="text" placeholder="可选">
+    <button class="cta-btn" id="confirm-add-word" style="margin-top:8px">
+      <span data-i18n="confirm">添加单词</span>
+      <div class="cta-icon">+</div>
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js?v=24"></script>
+</body>
+</html>

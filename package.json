@@ -1,0 +1,18 @@
+{
+  "name": "final",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server --baseDir=\"public\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "i": "^0.3.7",
+    "lite-server": "^2.6.1",
+    "npm": "^11.11.1"
+  }
+}
