@@ -410,3 +410,160 @@ html, body { height:100%; font-family:"poppins",sans-serif; font-size:16px; colo
 .dots span { width:5px; height:5px; border-radius:50%; background:var(--text3); animation:dotPulse .8s ease infinite; }
 .dots span:nth-child(2){ animation-delay:.15s; }
 .dots span:nth-child(3){ animation-delay:.3s; }
+
+/* ══ DESK SCREEN ══ */
+.desk-surface {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 20px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desk-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 60px 20px;
+}
+.desk-empty.hidden { display: none; }
+.desk-empty-icon  { font-size: 48px; }
+.desk-empty-text  { font-family:"neulis-sans",sans-serif; font-size:18px; font-weight:700; color:var(--text); }
+.desk-empty-sub   { font-size:13px; color:var(--text2); }
+
+.desk-trash-count {
+  font-size:13px; font-weight:600; color:var(--good);
+  background:rgba(48,209,88,.12); border-radius:999px; padding:4px 12px;
+}
+
+/* ── WORD BLOCKS ── */
+.word-block {
+  border-radius: 12px;
+  padding: 0 20px;
+  height: 56px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  /* width set dynamically by JS based on word length */
+  transition: transform .15s ease, filter .15s ease;
+  animation: blockSlideIn .4s cubic-bezier(.34,1.3,.64,1) both;
+  position: relative;
+  overflow: hidden;
+}
+.word-block::before {
+  /* subtle shine overlay */
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(rgba(255,255,255,.12), transparent);
+  border-radius: 12px 12px 0 0;
+  pointer-events: none;
+}
+.word-block:hover  { transform: translateX(4px) scale(1.02); filter: brightness(1.08); }
+.word-block:active { transform: scale(.97); }
+
+@keyframes blockSlideIn {
+  from { opacity:0; transform: translateX(-40px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+
+/* First letter — large, bold, slightly transparent */
+.wb-letter {
+  font-family: "neulis-sans", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  line-height: 1;
+  min-width: 28px;
+  flex-shrink: 0;
+}
+
+/* word length bar — fills remaining space */
+.wb-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,.3);
+  border-radius: 999px;
+  position: relative;
+}
+.wb-bar-fill {
+  position: absolute;
+  left: 0; top: 0; height: 100%;
+  background: rgba(255,255,255,.75);
+  border-radius: 999px;
+}
+
+/* wrong count badge */
+.wb-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,.8);
+  background: rgba(0,0,0,.2);
+  border-radius: 999px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+
+/* 6 colour ramps */
+.word-block.col0 { background: linear-gradient(135deg, #5e5ce6, #9b59e0); }
+.word-block.col1 { background: linear-gradient(135deg, #bf5af2, #ff6b9d); }
+.word-block.col2 { background: linear-gradient(135deg, #ff9f0a, #ff453a); }
+.word-block.col3 { background: linear-gradient(135deg, #30d158, #5e5ce6); }
+.word-block.col4 { background: linear-gradient(135deg, #64d2ff, #5e5ce6); }
+.word-block.col5 { background: linear-gradient(135deg, #ff453a, #ff9f0a); }
+
+/* deepen on repeated wrong */
+.word-block.cnt1 { opacity: .75; }
+.word-block.cnt2 { opacity: .88; filter: saturate(1.3); }
+.word-block.cnt3 { opacity: 1;   filter: saturate(1.7) brightness(.9); box-shadow: 0 4px 16px rgba(0,0,0,.35); }
+
+/* fly out to right */
+@keyframes blockFlyOut {
+  0%   { transform: translateX(0)     opacity:1; }
+  100% { transform: translateX(120%); opacity:0; }
+}
+.word-block.fly-away {
+  animation: blockFlyOut .4s ease-in forwards;
+  pointer-events: none;
+}
+
+/* shake on wrong */
+@keyframes blockShake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-8px); }
+  75%      { transform: translateX(8px); }
+}
+.word-block.shake {
+  animation: blockShake .3s ease;
+}
+
+/* ── DESK QUIZ MODAL ── */
+.dq-prompt {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  color: var(--text3); text-transform: uppercase; text-align: center;
+}
+.dq-meaning {
+  font-family: "neulis-sans", sans-serif;
+  font-size: 22px; font-weight: 700;
+  text-align: center; line-height: 1.4;
+  color: var(--text);
+}
+.dq-example {
+  font-size: 13px; color: var(--text3);
+  text-align: center; font-style: italic;
+  padding: 0 8px;
+}
+.dq-feedback {
+  min-height: 20px; font-size: 14px;
+  text-align: center; font-weight: 600;
+}
+.dq-feedback.ok  { color: var(--good); }
+.dq-feedback.err { color: var(--bad);  }

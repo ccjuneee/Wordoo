@@ -78,6 +78,10 @@
           <div class="nav-card-icon">🎯</div>
           <div class="nav-card-label" data-i18n="wrongbook">错题本</div>
         </button>
+        <button class="nav-card" id="btn-desk" style="grid-column:1/-1">
+          <div class="nav-card-icon">🗂️</div>
+          <div class="nav-card-label">我的桌面</div>
+        </button>
       </div>
     </div>
     <footer class="app-footer">© 2026 June Cheng. Built with AI.</footer>
@@ -172,6 +176,46 @@
     <div class="result-wrap" id="result-body"></div>
   </div>
 
+  <!-- DESK -->
+  <div class="screen" id="screen-desk">
+    <div class="nav-bar">
+      <button class="back-btn" data-back="home">‹</button>
+      <span class="nav-title" id="desk-title">我的桌面</span>
+      <div class="desk-trash-count" id="trash-count">🗑 0</div>
+    </div>
+    <div class="desk-surface" id="desk-surface">
+      <!-- paper balls injected by JS -->
+      <div class="desk-empty" id="desk-empty">
+        <div class="desk-empty-icon">✨</div>
+        <div class="desk-empty-text" id="desk-empty-text">桌面干净！</div>
+        <div class="desk-empty-sub" id="desk-empty-sub">答错题才会有纸团出现</div>
+      </div>
+    </div>
+    <div class="desk-bin" id="desk-bin">
+      <div class="desk-bin-icon">🗑️</div>
+    </div>
+  </div>
+
+  <!-- DESK QUIZ MODAL -->
+  <div class="modal-overlay" id="modal-desk-quiz" hidden>
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-head">
+        <span class="modal-title" id="dq-title">复习单词</span>
+        <button class="icon-btn" id="dq-close">✕</button>
+      </div>
+      <div class="dq-prompt" id="dq-prompt">看释义写英文</div>
+      <div class="dq-meaning" id="dq-meaning"></div>
+      <div class="dq-example" id="dq-example"></div>
+      <input class="field-input" id="dq-input" type="text" placeholder="输入英文单词…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="dq-feedback" id="dq-feedback"></div>
+      <button class="cta-btn" id="dq-submit">
+        <span id="dq-btn-text">确认</span>
+        <div class="cta-icon">→</div>
+      </button>
+    </div>
+  </div>
+
 </div><!-- /#app -->
 
 <!-- MODAL -->
@@ -197,6 +241,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="app.js?v=24"></script>
+<script src="app.js?v=28"></script>
 </body>
 </html>

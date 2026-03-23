@@ -190,11 +190,12 @@ window.onload = function() {
     document.getElementById('ring-text').textContent     = state.todayDone+'/'+state.dailyGoal;
   }
 
+  document.getElementById('btn-desk').onclick = function(){ renderDesk(); goTo('desk'); };
+
   var wbBtn = document.getElementById('btn-wordbook');
   if (!wbBtn) { console.error('btn-wordbook NOT FOUND'); }
   else {
     wbBtn.addEventListener('click', function(e) {
-      console.log('wordbook clicked', e.target);
       renderWordList(); goTo('wordbook');
     });
   }
@@ -460,4 +461,174 @@ window.onload = function() {
   }
 
   updateHomeUI();
-};
+
+  /* ══ DESK ══ */
+  var deskBalls = JSON.parse(localStorage.getItem('wd_desk') || '[]');
+  var deskTrashCount = parseInt(localStorage.getItem('wd_trash') || '0');
+  var activeBall = null;
+  var COLORS = ['col0','col1','col2','col3','col4','col5'];
+
+  function saveDesk() {
+    localStorage.setItem('wd_desk', JSON.stringify(deskBalls));
+    localStorage.setItem('wd_trash', String(deskTrashCount));
+  }
+
+  function syncDesk() {
+    // add new wrong words not yet in desk
+    state.wrong.forEach(function(w) {
+      var found = deskBalls.find(function(b){ return b.en === w.en; });
+      if (!found) {
+        deskBalls.push({
+          en: w.en, zh: w.zh||'', example: w.example||'',
+          count: w.count||1,
+          col: Math.floor(Math.random() * 6)
+        });
+      } else {
+        found.count = w.count || found.count;
+      }
+    });
+    // remove from desk if no longer in wrong list
+    deskBalls = deskBalls.filter(function(b){
+      return state.wrong.find(function(w){ return w.en === b.en; });
+    });
+    saveDesk();
+  }
+
+  function renderDesk() {
+    syncDesk();
+    var surface = document.getElementById('desk-surface');
+    var isEn    = state.lang === 'en';
+
+    document.getElementById('desk-title').textContent      = isEn ? 'My Desk'    : '我的桌面';
+    document.getElementById('desk-empty-text').textContent = isEn ? 'Desk is clean!' : '桌面干净！';
+    document.getElementById('desk-empty-sub').textContent  = isEn ? 'Wrong answers appear here' : '答错的单词会出现在这里';
+    document.getElementById('trash-count').textContent     = '🗑 ' + deskTrashCount;
+
+    surface.querySelectorAll('.word-block').forEach(function(b){ b.remove(); });
+    var empty = document.getElementById('desk-empty');
+
+    if (!deskBalls.length) {
+      empty.classList.remove('hidden');
+      return;
+    }
+    empty.classList.add('hidden');
+
+    // sort: newest at bottom (keep insertion order)
+    deskBalls.forEach(function(ball, i) {
+      var el  = document.createElement('div');
+      var cnt = ball.count || 1;
+      var cntCls = cnt >= 3 ? 'cnt3' : cnt === 2 ? 'cnt2' : 'cnt1';
+
+      el.className = 'word-block ' + COLORS[ball.col % 6] + ' ' + cntCls;
+      el.style.animationDelay = (i * 0.07) + 's';
+
+      // width: base 120px + 8px per letter, capped at surface width - 40px
+      var W = surface.clientWidth || 340;
+      var blockW = Math.min(120 + ball.en.length * 8, W - 40);
+      el.style.width = blockW + 'px';
+
+      // bar fill = word length proportion (max 20 chars = 100%)
+      var barPct = Math.min(ball.en.length / 18, 1) * 100;
+
+      el.innerHTML =
+        '<div class="wb-letter">' + ball.en[0].toUpperCase() + '</div>' +
+        '<div class="wb-bar"><div class="wb-bar-fill" style="width:' + barPct + '%"></div></div>' +
+        (cnt > 1 ? '<div class="wb-count">✗' + cnt + '</div>' : '');
+
+      el.onclick = function(){ openDeskQuiz(ball, el); };
+      surface.appendChild(el);
+    });
+  }
+
+  function openDeskQuiz(ball, el) {
+    activeBall = {ball: ball, el: el};
+    var isEn = state.lang === 'en';
+    document.getElementById('dq-prompt').textContent   = isEn ? 'Write the English word' : '看释义写英文单词';
+    document.getElementById('dq-meaning').textContent  = ball.zh || (isEn ? '(no definition)' : '（无释义）');
+    document.getElementById('dq-example').textContent  = ball.example ? '"' + ball.example + '"' : '';
+    document.getElementById('dq-input').value          = '';
+    document.getElementById('dq-feedback').textContent = '';
+    document.getElementById('dq-feedback').className   = 'dq-feedback';
+    document.getElementById('dq-btn-text').textContent = isEn ? 'Submit' : '确认';
+    document.getElementById('dq-title').textContent    = isEn ? 'Review' : '复习';
+    document.getElementById('modal-desk-quiz').removeAttribute('hidden');
+    setTimeout(function(){ document.getElementById('dq-input').focus(); }, 150);
+  }
+
+  document.getElementById('dq-close').onclick = function(){
+    document.getElementById('modal-desk-quiz').setAttribute('hidden','');
+    activeBall = null;
+  };
+  document.getElementById('modal-desk-quiz').onclick = function(e){
+    if (e.target === document.getElementById('modal-desk-quiz')){
+      document.getElementById('modal-desk-quiz').setAttribute('hidden','');
+      activeBall = null;
+    }
+  };
+  document.getElementById('dq-submit').onclick = submitDeskQuiz;
+  document.getElementById('dq-input').onkeydown = function(e){ if(e.key==='Enter') submitDeskQuiz(); };
+
+  function submitDeskQuiz() {
+    if (!activeBall) return;
+    var ans  = document.getElementById('dq-input').value.trim();
+    var fb   = document.getElementById('dq-feedback');
+    var isEn = state.lang === 'en';
+    if (!ans) {
+      fb.textContent = isEn ? 'Please type the word' : '请输入英文单词';
+      fb.className = 'dq-feedback err'; return;
+    }
+    var correct = ans.toLowerCase() === activeBall.ball.en.toLowerCase();
+
+    if (correct) {
+      fb.textContent = (isEn ? '✓ Correct! ' : '✓ 答对了！') + activeBall.ball.en;
+      fb.className = 'dq-feedback ok';
+      document.getElementById('dq-submit').disabled = true;
+      setTimeout(function(){
+        activeBall.el.classList.add('fly-away');
+        var en = activeBall.ball.en;
+        // remove from desk but keep in wrong list
+        // (will come back if wrong again in quiz)
+        deskBalls = deskBalls.filter(function(b){ return b.en !== en; });
+        // remove from wrong list too — they cleared it
+        state.wrong = state.wrong.filter(function(w){ return w.en !== en; });
+        deskTrashCount++;
+        save(); saveDesk();
+        var bin = document.getElementById('desk-bin');
+        if (bin) { bin.classList.add('shake'); setTimeout(function(){ bin.classList.remove('shake'); }, 500); }
+        document.getElementById('trash-count').textContent = '🗑 ' + deskTrashCount;
+        setTimeout(function(){
+          document.getElementById('modal-desk-quiz').setAttribute('hidden','');
+          if (activeBall && activeBall.el) activeBall.el.remove();
+          activeBall = null;
+          document.getElementById('dq-submit').disabled = false;
+          if (!deskBalls.length) document.getElementById('desk-empty').classList.remove('hidden');
+          updateHomeUI();
+        }, 440);
+      }, 700);
+
+    } else {
+      fb.textContent = (isEn ? '✗ Answer: ' : '✗ 正确答案：') + activeBall.ball.en;
+      fb.className = 'dq-feedback err';
+      activeBall.el.classList.remove('shake');
+      void activeBall.el.offsetWidth;
+      activeBall.el.classList.add('shake');
+      setTimeout(function(){ if(activeBall) activeBall.el.classList.remove('shake'); }, 350);
+      activeBall.ball.count = (activeBall.ball.count||1) + 1;
+      var cnt    = activeBall.ball.count;
+      var cntCls = cnt >= 3 ? 'cnt3' : cnt === 2 ? 'cnt2' : 'cnt1';
+      activeBall.el.className = 'word-block ' + COLORS[activeBall.ball.col % 6] + ' ' + cntCls;
+      var countEl = activeBall.el.querySelector('.wb-count');
+      if (countEl) countEl.textContent = '✗' + cnt;
+      else {
+        var d = document.createElement('div');
+        d.className = 'wb-count'; d.textContent = '✗' + cnt;
+        activeBall.el.appendChild(d);
+      }
+      var ww = state.wrong.find(function(w){ return w.en === activeBall.ball.en; });
+      if (ww) ww.count = cnt;
+      save(); saveDesk();
+      document.getElementById('dq-input').value = '';
+      setTimeout(function(){ document.getElementById('dq-input').focus(); }, 150);
+    }
+  }
+}; // end window.onload
