@@ -190,8 +190,6 @@ window.onload = function() {
     document.getElementById('ring-text').textContent     = state.todayDone+'/'+state.dailyGoal;
   }
 
-  document.getElementById('btn-desk').onclick = function(){ renderDesk(); goTo('desk'); };
-
   var wbBtn = document.getElementById('btn-wordbook');
   if (!wbBtn) { console.error('btn-wordbook NOT FOUND'); }
   else {
@@ -287,21 +285,33 @@ window.onload = function() {
 
   /* ── WRONG BOOK ── */
   function renderWrongList(){
-    const box=document.getElementById('wrong-list'), emp=document.getElementById('empty-wrong');
-    box.innerHTML='';
-    if(!state.wrong.length){ emp.removeAttribute('hidden'); return; }
-    emp.setAttribute('hidden','');
-    state.wrong.forEach((w,i)=>{
-      const c=document.createElement('div'); c.className='word-card'; c.style.animationDelay=(i*.05)+'s';
-      c.innerHTML=`<div class="word-main"><div class="word-en">${w.en}</div><div class="word-zh">${w.zh||''}</div>
-        <div class="word-ex" style="color:var(--bad)">${state.lang==='zh'?'错误':'Wrong'} ${w.count||1}×</div></div>
-        <div class="word-actions"><button class="word-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}')">🔊</button></div>`;
-      box.appendChild(c);
-    });
+    var box  = document.getElementById('wrong-list');
+    var emp  = document.getElementById('empty-wrong');
+    var isEn = state.lang === 'en';
+    var pb   = document.getElementById('btn-go-practice');
+    if (pb) pb.textContent = isEn ? 'Practice' : '练习';
+    box.innerHTML = '';
+    if (!state.wrong.length) {
+      emp.removeAttribute('hidden');
+    } else {
+      emp.setAttribute('hidden','');
+      state.wrong.forEach(function(w,i){
+        var c = document.createElement('div');
+        c.className = 'word-card'; c.style.animationDelay = (i*.05)+'s';
+        c.innerHTML = '<div class="word-main">' +
+          '<div class="word-en">'+w.en+'</div>' +
+          '<div class="word-zh">'+(w.zh||'')+'</div>' +
+          '<div class="word-ex" style="color:var(--bad)">'+(isEn?'Wrong':'错误')+' '+(w.count||1)+'x</div>' +
+          '</div>' +
+          '<div class="word-actions"><button class="word-btn wb-speak">🔊</button></div>';
+        c.querySelector('.wb-speak').onclick = function(){ speak(w.en); };
+        box.appendChild(c);
+      });
+    }
   }
-  document.getElementById('btn-clear-wrong').onclick = function(){
-    if(!state.wrong.length) return;
-    state.wrong=[]; save(); renderWrongList(); updateHomeUI(); toast(t('cleared'));
+  // practice button → go to desk screen
+  document.getElementById('btn-go-practice').onclick = function(){
+    renderDesk(); goTo('desk');
   };
 
   /* ── PROFILE ── */
@@ -499,10 +509,14 @@ window.onload = function() {
     var surface = document.getElementById('desk-surface');
     var isEn    = state.lang === 'en';
 
-    document.getElementById('desk-title').textContent      = isEn ? 'My Desk'    : '我的桌面';
-    document.getElementById('desk-empty-text').textContent = isEn ? 'Desk is clean!' : '桌面干净！';
-    document.getElementById('desk-empty-sub').textContent  = isEn ? 'Wrong answers appear here' : '答错的单词会出现在这里';
-    document.getElementById('trash-count').textContent     = '🗑 ' + deskTrashCount;
+    var deskTitle = document.getElementById('desk-title');
+    if (deskTitle) deskTitle.textContent = isEn ? 'Practice' : '练习';
+    var emptyText = document.getElementById('desk-empty-text');
+    var emptySub  = document.getElementById('desk-empty-sub');
+    if (emptyText) emptyText.textContent = isEn ? 'All clear!' : '全部答对了！';
+    if (emptySub)  emptySub.textContent  = isEn ? 'Wrong answers appear here' : '答错题才会出现在这里';
+    var tc = document.getElementById('trash-count');
+    if (tc) tc.textContent = '🗑 ' + deskTrashCount;
 
     surface.querySelectorAll('.word-block').forEach(function(b){ b.remove(); });
     var empty = document.getElementById('desk-empty');

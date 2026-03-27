@@ -78,10 +78,7 @@
           <div class="nav-card-icon">🎯</div>
           <div class="nav-card-label" data-i18n="wrongbook">错题本</div>
         </button>
-        <button class="nav-card" id="btn-desk" style="grid-column:1/-1">
-          <div class="nav-card-icon">🗂️</div>
-          <div class="nav-card-label">我的桌面</div>
-        </button>
+
       </div>
     </div>
     <footer class="app-footer">© 2026 June Cheng. Built with AI.</footer>
@@ -113,7 +110,7 @@
     <div class="nav-bar">
       <button class="back-btn" data-back="home">‹</button>
       <span class="nav-title" data-i18n="wrongbook">错题本</span>
-      <button class="icon-btn red" id="btn-clear-wrong">🗑</button>
+      <button class="practice-btn" id="btn-go-practice">练习</button>
     </div>
     <div class="list-wrap" id="wrong-list"></div>
     <div class="empty-state" id="empty-wrong">
@@ -171,30 +168,27 @@
     <div class="quiz-body" id="quiz-body"></div>
   </div>
 
+  <!-- PRACTICE (desk) -->
+  <div class="screen" id="screen-desk">
+    <div class="nav-bar">
+      <button class="back-btn" data-back="wrongbook">‹</button>
+      <span class="nav-title" id="desk-title">练习</span>
+      <div class="desk-trash-count" id="trash-count">🗑 0</div>
+    </div>
+    <div class="desk-surface" id="desk-surface">
+      <div class="desk-empty" id="desk-empty">
+        <div class="desk-empty-icon">✨</div>
+        <div class="desk-empty-text" id="desk-empty-text">全部答对了！</div>
+        <div class="desk-empty-sub" id="desk-empty-sub">答错题才会出现在这里</div>
+      </div>
+    </div>
+  </div>
+
   <!-- RESULT -->
   <div class="screen" id="screen-result">
     <div class="result-wrap" id="result-body"></div>
   </div>
 
-  <!-- DESK -->
-  <div class="screen" id="screen-desk">
-    <div class="nav-bar">
-      <button class="back-btn" data-back="home">‹</button>
-      <span class="nav-title" id="desk-title">我的桌面</span>
-      <div class="desk-trash-count" id="trash-count">🗑 0</div>
-    </div>
-    <div class="desk-surface" id="desk-surface">
-      <!-- paper balls injected by JS -->
-      <div class="desk-empty" id="desk-empty">
-        <div class="desk-empty-icon">✨</div>
-        <div class="desk-empty-text" id="desk-empty-text">桌面干净！</div>
-        <div class="desk-empty-sub" id="desk-empty-sub">答错题才会有纸团出现</div>
-      </div>
-    </div>
-    <div class="desk-bin" id="desk-bin">
-      <div class="desk-bin-icon">🗑️</div>
-    </div>
-  </div>
 
   <!-- DESK QUIZ MODAL -->
   <div class="modal-overlay" id="modal-desk-quiz" hidden>
@@ -241,6 +235,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script src="app.js?v=28"></script>
+<script src="app.js?v=32"></script>
 </body>
 </html>

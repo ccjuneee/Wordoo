@@ -411,12 +411,29 @@ html, body { height:100%; font-family:"poppins",sans-serif; font-size:16px; colo
 .dots span:nth-child(2){ animation-delay:.15s; }
 .dots span:nth-child(3){ animation-delay:.3s; }
 
+/* ── practice button ── */
+.practice-btn {
+  background: var(--cta-bg);
+  border: none;
+  border-radius: 999px;
+  padding: 6px 18px;
+  color: #fff;
+  font-family: "neulis-sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(94,92,230,.35);
+  transition: transform .12s, box-shadow .15s;
+}
+.practice-btn:hover  { box-shadow: 0 4px 16px rgba(94,92,230,.5); transform: translateY(-1px); }
+.practice-btn:active { transform: scale(.95); box-shadow: none; }
+
 /* ══ DESK SCREEN ══ */
 .desk-surface {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 16px 20px 100px;
+  padding: 16px 20px 80px;
   display: flex;
   flex-direction: column;
   gap: 10px;
