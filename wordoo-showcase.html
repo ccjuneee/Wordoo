@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wordoo — Project Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #5e5ce6;
+    --purple2: #bf5af2;
+    --green:  #30d158;
+    --bg:     #0a0a0f;
+    --bg2:    #12121a;
+    --surface:#1a1a28;
+    --text:   #f0eff8;
+    --text2:  #8884aa;
+    --border: rgba(255,255,255,.08);
+    --grad:   linear-gradient(135deg, #5e5ce6, #bf5af2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── AMBIENT BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(94,92,230,.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 80% 70%, rgba(191,90,242,.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(48,209,88,.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 48px;
+  }
+
+  .hero-text { display: flex; flex-direction: column; gap: 24px; }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--purple2);
+    opacity: 0;
+    animation: fadeSlideUp .6s ease .2s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--purple2);
+  }
+
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(52px, 6vw, 80px);
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    opacity: 0;
+    animation: fadeSlideUp .7s ease .35s forwards;
+  }
+  .hero-title .gradient-word {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text2);
+    max-width: 440px;
+    opacity: 0;
+    animation: fadeSlideUp .7s ease .5s forwards;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeSlideUp .7s ease .65s forwards;
+  }
+  .tag {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    background: var(--surface);
+  }
+  .tag.accent {
+    border-color: rgba(94,92,230,.4);
+    color: #a09ee8;
+    background: rgba(94,92,230,.1);
+  }
+
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeSlideUp .7s ease .8s forwards;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border-radius: 999px;
+    background: var(--grad);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity .2s, transform .15s;
+    box-shadow: 0 8px 32px rgba(94,92,230,.4);
+  }
+  .btn-primary:hover { opacity: .88; transform: translateY(-2px); }
+  .btn-ghost {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .btn-ghost:hover { color: var(--text); }
+
+  /* ── PHONE FRAME ── */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeSlideUp .8s ease .45s forwards;
+  }
+
+  .phone-outer {
+    position: relative;
+    width: 280px;
+    filter: drop-shadow(0 40px 80px rgba(94,92,230,.35)) drop-shadow(0 20px 40px rgba(0,0,0,.6));
+  }
+
+  /* glow ring behind phone */
+  .phone-outer::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border-radius: 60px;
+    background: radial-gradient(ellipse at center, rgba(94,92,230,.3) 0%, transparent 70%);
+    z-index: -1;
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%,100% { opacity: .6; transform: scale(1); }
+    50%      { opacity: 1;  transform: scale(1.05); }
+  }
+
+  .phone-frame {
+    position: relative;
+    width: 280px;
+    height: 580px;
+    background: #1a1a1f;
+    border-radius: 44px;
+    border: 2px solid rgba(255,255,255,.15);
+    overflow: hidden;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      inset 0 1px 0 rgba(255,255,255,.12);
+  }
+
+  /* notch */
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 28px;
+    background: #0a0a0f;
+    border-radius: 999px;
+    z-index: 10;
+  }
+
+  /* side buttons */
+  .phone-frame::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 100px;
+    width: 3px;
+    height: 60px;
+    background: rgba(255,255,255,.1);
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 80px 0 rgba(255,255,255,.1);
+  }
+
+  .phone-screen {
+    position: absolute;
+    inset: 0;
+    border-radius: 42px;
+    overflow: hidden;
+  }
+
+  .phone-screen iframe {
+    width: 390px;
+    height: 844px;
+    border: none;
+    transform-origin: top left;
+    transform: scale(0.7179);  /* 280/390 */
+    pointer-events: auto;
+  }
+
+  /* ── FEATURES STRIP ── */
+  .features {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color .2s, transform .2s;
+  }
+  .feature-card:hover {
+    border-color: rgba(94,92,230,.4);
+    transform: translateY(-4px);
+  }
+  .feature-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .feature-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    letter-spacing: -.01em;
+  }
+  .feature-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text2);
+  }
+
+  /* ── FOOTER ── */
+  .showcase-footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 48px 60px;
+    font-size: 13px;
+    color: var(--text2);
+    border-top: 1px solid var(--border);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .showcase-footer a { color: var(--purple2); text-decoration: none; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      text-align: center;
+      padding: 48px 24px;
+      gap: 48px;
+    }
+    .hero-text { align-items: center; }
+    .hero-desc { max-width: 100%; }
+    .phone-wrap { order: -1; }
+    .phone-outer { width: 220px; }
+    .phone-frame { width: 220px; height: 456px; border-radius: 36px; }
+    .phone-frame::before { width: 80px; height: 22px; }
+    .phone-screen iframe { transform: scale(0.5641); }
+    .features { grid-template-columns: 1fr; padding: 40px 24px; }
+    .showcase-footer { padding: 32px 24px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-text">
+    <span class="hero-eyebrow">Web Dev Final Project</span>
+
+    <h1 class="hero-title">
+      Meet<br>
+      <span class="gradient-word">Wordoo.</span>
+    </h1>
+
+    <p class="hero-desc">
+      An AI-powered vocabulary app I built from scratch. Add your own words,
+      take smart quizzes, and clear your mistake desk — in English or Chinese.
+    </p>
+
+    <div class="hero-tags">
+      <span class="tag accent">HTML / CSS / JS</span>
+      <span class="tag accent">Node.js + Express</span>
+      <span class="tag accent">Hugging Face AI</span>
+      <span class="tag">Dark &amp; Light Mode</span>
+      <span class="tag">i18n EN/ZH</span>
+      <span class="tag">PWA Ready</span>
+    </div>
+
+    <div class="hero-cta">
+      <a class="btn-primary" href="https://ccjuneee.github.io/Wordoo/index.html" target="_blank">
+        Try it live ↗
+      </a>
+      <a class="btn-ghost" href="https://github.com/ccjuneee/Wordoo" target="_blank">
+        GitHub →
+      </a>
+    </div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone-outer">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <iframe
+            src="https://ccjuneee.github.io/Wordoo/index.html"
+            title="Wordoo App"
+            loading="lazy"
+            allow="autoplay"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature-card">
+    <div class="feature-icon">📚</div>
+    <div class="feature-title">Smart Word Book</div>
+    <div class="feature-desc">Add any English word — definitions and pronunciation fill in automatically via dictionary API. No manual typing needed.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">🧠</div>
+    <div class="feature-title">AI Quiz Engine</div>
+    <div class="feature-desc">Three quiz formats: fill-in-the-blank, multiple choice, and guess the word. Get AI-powered explanations after every answer.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">🗂️</div>
+    <div class="feature-title">Mistake Practice</div>
+    <div class="feature-desc">Wrong answers appear as coloured blocks in your practice desk. Blocks get deeper and bolder the more times you miss a word.</div>
+  </div>
+</section>
+
+<footer class="showcase-footer">
+  Built by <a href="#">June Cheng</a> · 2026 ·
+  <a href="https://ccjuneee.github.io/Wordoo/index.html" target="_blank">Live Demo</a> ·
+  <a href="https://github.com/ccjuneee/Wordoo" target="_blank">Source Code</a>
+</footer>
+
+</body>
+</html>
