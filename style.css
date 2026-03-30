@@ -85,7 +85,15 @@ html, body { height:100%; font-family:"poppins",sans-serif; font-size:16px; colo
   position: absolute;
   inset: 0;
   background: linear-gradient(170deg, #8b7fd4 0%, #a99ee8 30%, #c4bdf0 60%, #dcd8f8 85%, #edeaf9 100%);
+  background-size: 300% 300%;
+  animation: gradientFlow 8s ease infinite;
   pointer-events: none;
+}
+@keyframes gradientFlow {
+  0%   { background-position: 0%   50%; }
+  33%  { background-position: 100% 20%; }
+  66%  { background-position: 50%  100%; }
+  100% { background-position: 0%   50%; }
 }
 .splash-orb {
   position: absolute;
@@ -154,14 +162,14 @@ html, body { height:100%; font-family:"poppins",sans-serif; font-size:16px; colo
   text-align: center;
   font-family: "poppins", sans-serif;
   font-size: 12px;
-  color: rgba(255,255,255,.45);
-  letter-spacing: .08em;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .1em;
   z-index: 2;
-  animation: hintPulse 2.5s ease-in-out 1.5s infinite;
+  animation: hintPulse 2.2s ease-in-out 1.2s infinite;
 }
 @keyframes hintPulse {
-  0%,100% { opacity:.35; }
-  50%      { opacity:.75; }
+  0%,100% { opacity:.3; transform: translateY(0); }
+  50%      { opacity:.8; transform: translateY(-3px); }
 }
 
 /* ══ HOME HERO ══ */
@@ -410,6 +418,85 @@ html, body { height:100%; font-family:"poppins",sans-serif; font-size:16px; colo
 .dots span { width:5px; height:5px; border-radius:50%; background:var(--text3); animation:dotPulse .8s ease infinite; }
 .dots span:nth-child(2){ animation-delay:.15s; }
 .dots span:nth-child(3){ animation-delay:.3s; }
+
+
+/* ══ CUSTOM CURSOR ══ */
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%,-50%);
+  transition: transform .12s ease, width .2s ease, height .2s ease, opacity .2s;
+  mix-blend-mode: screen;
+  display: none; /* shown via JS only on non-touch */
+}
+[data-theme="dark"]  #cursor { background: rgba(255,255,255,.9); box-shadow: 0 0 10px rgba(255,255,255,.5); mix-blend-mode: normal; }
+[data-theme="light"] #cursor { background: rgba(94,92,230,.9); box-shadow: 0 0 12px rgba(94,92,230,.5); mix-blend-mode: normal; }
+
+#cursor.hover {
+  width: 22px; height: 22px;
+  opacity: .7;
+}
+#cursor.click {
+  width: 6px; height: 6px;
+  opacity: 1;
+}
+
+/* ══ GRADIENT SHIMMER on interactive elements ══ */
+.cta-btn,
+.nav-card,
+.stat-card.accent,
+.choice-btn,
+.practice-btn,
+.ctrl-btn {
+  --mx: 50%; --my: 50%;
+}
+.cta-btn::after,
+.nav-card::after,
+.choice-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mx) var(--my),
+    rgba(255,255,255,.18) 0%,
+    transparent 65%);
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+.cta-btn { position: relative; overflow: hidden; }
+.nav-card { position: relative; overflow: hidden; }
+.choice-btn { position: relative; overflow: hidden; }
+
+.cta-btn:hover::after,
+.nav-card:hover::after,
+.choice-btn:hover::after {
+  opacity: 1;
+}
+/* light mode: darker shimmer so it's visible on light surfaces */
+[data-theme="light"] .nav-card::after,
+[data-theme="light"] .choice-btn::after {
+  background: radial-gradient(circle at var(--mx) var(--my),
+    rgba(94,92,230,.12) 0%,
+    transparent 65%);
+}
+
+/* smooth scale on hover for all tappable elements */
+.nav-card:hover    { transform: translateY(-4px) scale(1.02); }
+.stat-card:hover   { transform: translateY(-3px) scale(1.015); }
+.ctrl-btn:hover    { transform: scale(1.1); }
+.practice-btn:hover { transform: scale(1.04) translateY(-1px); }
+.choice-btn:hover  { transform: scale(1.025); }
+.cta-btn:hover     { transform: translateY(-2px); }
+.back-btn:hover    { transform: scale(1.12); opacity: .8; }
+.word-btn:hover    { transform: scale(1.15); }
+.icon-btn:hover    { transform: scale(1.1); }
 
 /* ── practice button ── */
 .practice-btn {

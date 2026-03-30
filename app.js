@@ -23,6 +23,53 @@ function save() {
   localStorage.setItem('wd_lang',      state.lang);
 }
 
+// ── Smart distractors for choice questions ──
+function getDistractors(targetWord, allWords, count) {
+  var others = allWords.filter(function(w){ return w.en !== targetWord.en; });
+  if (others.length === 0) return [];
+
+  var scored = others.map(function(w) {
+    var score = 0;
+
+    // 1. Same first letter → +3
+    if (w.en[0].toLowerCase() === targetWord.en[0].toLowerCase()) score += 3;
+
+    // 2. Similar length (within 2 chars) → +2
+    if (Math.abs(w.en.length - targetWord.en.length) <= 2) score += 2;
+
+    // 3. Shared letters (Jaccard similarity on char sets) → up to +4
+    var setA = new Set(targetWord.en.toLowerCase().split(''));
+    var setB = new Set(w.en.toLowerCase().split(''));
+    var intersection = [...setA].filter(function(c){ return setB.has(c); }).length;
+    var union = new Set([...setA, ...setB]).size;
+    score += Math.round((intersection / union) * 4);
+
+    // 4. Shared keyword in zh meaning → +3 (strongest semantic signal)
+    if (targetWord.zh && w.zh) {
+      var wordsA = targetWord.zh.replace(/[，。；、]/g,' ').split(/\s+/);
+      var wordsB = w.zh.replace(/[，。；、]/g,' ').split(/\s+/);
+      var sharedZh = wordsA.some(function(wa){
+        return wa.length > 1 && wordsB.some(function(wb){ return wb.includes(wa) || wa.includes(wb); });
+      });
+      if (sharedZh) score += 3;
+    }
+
+    // 5. Small random jitter so equally-scored words vary
+    score += Math.random() * 0.8;
+
+    return { word: w, score: score };
+  });
+
+  // sort descending by score
+  scored.sort(function(a, b){ return b.score - a.score; });
+
+  // take top (count*2) candidates, then pick randomly from them
+  // so we get "smart but not always identical" distractors
+  var pool = scored.slice(0, Math.max(count * 2, 4));
+  shuffle(pool);
+  return pool.slice(0, count).map(function(s){ return s.word; });
+}
+
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length-1; i > 0; i--) {
@@ -109,6 +156,56 @@ function addToWrong(word) {
 
 window.onload = function() {
 
+  /* ── CUSTOM CURSOR (desktop only) ── */
+  var cursorEl = document.getElementById('cursor');
+  var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  if (!isTouch && cursorEl) {
+    cursorEl.style.display = 'block';
+    var cx = window.innerWidth/2, cy = window.innerHeight/2;
+    var tx = cx, ty = cy;
+
+    document.addEventListener('mousemove', function(e) {
+      tx = e.clientX; ty = e.clientY;
+    });
+
+    // smooth follow with lerp
+    (function loop() {
+      cx += (tx - cx) * 0.18;
+      cy += (ty - cy) * 0.18;
+      cursorEl.style.left = cx + 'px';
+      cursorEl.style.top  = cy + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    // hover state on interactive elements
+    var interactives = 'button, a, input, [onclick], .nav-card, .stat-card, .choice-btn, .word-card, .paper-ball, .word-block';
+    document.addEventListener('mouseover', function(e) {
+      if (e.target.closest(interactives)) cursorEl.classList.add('hover');
+    });
+    document.addEventListener('mouseout', function(e) {
+      if (e.target.closest(interactives)) cursorEl.classList.remove('hover');
+    });
+    document.addEventListener('mousedown', function() {
+      cursorEl.classList.add('click');
+      cursorEl.classList.remove('hover');
+    });
+    document.addEventListener('mouseup', function() {
+      cursorEl.classList.remove('click');
+    });
+  }
+
+  /* ── GRADIENT SHIMMER: track mouse position per button ── */
+  document.addEventListener('mousemove', function(e) {
+    var els = document.querySelectorAll('.cta-btn, .nav-card, .choice-btn');
+    els.forEach(function(el) {
+      var r = el.getBoundingClientRect();
+      var x = ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%';
+      var y = ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%';
+      el.style.setProperty('--mx', x);
+      el.style.setProperty('--my', y);
+    });
+  });
+
   /* ── SPLASH ── */
   const splash = document.getElementById('screen-splash');
   let splashGone = false;
@@ -123,15 +220,8 @@ window.onload = function() {
       splash.style.zIndex = '-1';  // belt and suspenders
     }, 480);
   }
+  // tap anywhere to enter — no auto timer
   splash.onclick = exitSplash;
-  // Also auto-exit after 5s
-  setTimeout(exitSplash, 5000);
-  // Safety net: if something went wrong, force remove after 6s
-  setTimeout(function() {
-    splash.style.display = 'none';
-    splash.style.pointerEvents = 'none';
-    splash.style.zIndex = '-1';
-  }, 6100);
 
   /* ── THEME ── */
   const html = document.documentElement;
@@ -373,7 +463,18 @@ window.onload = function() {
       document.getElementById('hint-btn').onclick=function(){speak(q.word.en);};
 
     } else if(q.type==='choice'){
-      const opts=shuffle([q.word.zh||q.word.en,...shuffle(state.words.filter(w=>w.en!==q.word.en).map(w=>w.zh||w.en)).slice(0,3)]);
+      // get 3 smart distractors (similar spelling/meaning)
+      var distractors = getDistractors(q.word, state.words, 3);
+      // fall back to random if not enough words
+      if (distractors.length < 3) {
+        var fallback = shuffle(state.words.filter(function(w){ return w.en !== q.word.en; }));
+        while (distractors.length < 3 && fallback.length > distractors.length) {
+          var fb = fallback[distractors.length];
+          if (!distractors.find(function(d){ return d.en === fb.en; })) distractors.push(fb);
+        }
+      }
+      var correctLabel = q.word.zh || q.word.en;
+      var opts = shuffle([correctLabel, ...distractors.map(function(w){ return w.zh || w.en; })]);
       body.innerHTML=`<span class="type-badge">${t('choice')}</span>
         <div class="quiz-q"><span class="quiz-highlight">${q.word.en}</span>${state.lang==='zh'?' 的意思是？':' means?'}</div>
         <div class="choices">${opts.map((o,i)=>`<button class="choice-btn" data-opt="${o}"><span class="letter">${'ABCD'[i]}</span>${o}</button>`).join('')}</div>
