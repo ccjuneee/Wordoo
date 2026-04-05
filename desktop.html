@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://use.typekit.net/lel4jfe.css">
 <link rel="stylesheet" href="style.css">
 <style>
-html,body{height:100%;overflow:hidden;background:#07070f;cursor:none;}
+html,body{height:100%;overflow:hidden;background:#07070f;cursor:none;}[data-theme='light'] body{background:#ece9f8;}[data-theme='light'] #dt-bg{opacity:0;pointer-events:none;}
 #app{display:none!important;position:absolute;opacity:0;pointer-events:none;width:0;height:0;overflow:hidden;}
 #dt-bg{position:fixed;inset:0;z-index:0;}
 #dt-cur{position:fixed;z-index:9999;pointer-events:none;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);transition:width .18s,height .18s,opacity .18s;}
@@ -15,7 +15,7 @@ html,body{height:100%;overflow:hidden;background:#07070f;cursor:none;}
 [data-theme="light"] #dt-cur{background:rgba(94,92,230,.9);box-shadow:0 0 14px rgba(94,92,230,.5);}
 #dt-cur.big{width:24px;height:24px;opacity:.55;}
 #dt-shell{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.dt-panel{display:none;flex-direction:column;align-items:center;width:100%;max-width:860px;padding:0 32px;animation:dtIn .28s ease both;}
+.dt-panel{display:none;flex-direction:column;align-items:center;width:100%;max-width:860px;padding:0 32px;animation:dtIn .28s ease both;gap:0;}
 .dt-panel.active{display:flex;}
 @keyframes dtIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 #dt-topbar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:20px 36px;}
@@ -34,17 +34,17 @@ html,body{height:100%;overflow:hidden;background:#07070f;cursor:none;}
 .dt-pills-row{display:flex;gap:10px;margin-bottom:44px;}
 .dt-pill{padding:8px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(8px);font-size:14px;font-weight:600;color:rgba(255,255,255,.8);}
 [data-theme="light"] .dt-pill{border-color:rgba(0,0,0,.1);background:rgba(0,0,0,.06);color:#1d1d1f;}
-.dt-start-btn{width:100%;max-width:500px;padding:20px 40px;border-radius:18px;background:linear-gradient(135deg,#5e5ce6,#bf5af2);border:none;color:#fff;font-family:"neulis-sans",sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 12px 40px rgba(94,92,230,.45);transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden;}
+.dt-start-btn{width:100%;max-width:500px;align-self:center;padding:20px 40px;border-radius:18px;background:linear-gradient(135deg,#5e5ce6,#bf5af2);border:none;color:#fff;font-family:"neulis-sans",sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 12px 40px rgba(94,92,230,.45);transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden;}
 .dt-start-btn::after{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.2) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
 .dt-start-btn:hover{transform:translateY(-3px);box-shadow:0 18px 48px rgba(94,92,230,.6);}
 .dt-start-btn:hover::after{opacity:1;}
 .dt-start-btn:active{transform:scale(.98);}
-.dt-nav-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;}
-.dt-nav-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:16px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:background .2s,transform .18s,border-color .2s;}
+.dt-nav-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%;max-width:500px;}
+.dt-nav-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:18px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:background .2s,transform .18s,border-color .2s;}
 .dt-nav-card:hover{background:rgba(255,255,255,.13);transform:translateY(-4px);border-color:rgba(94,92,230,.4);}
 [data-theme="light"] .dt-nav-card{background:rgba(255,255,255,.65);border-color:rgba(0,0,0,.08);}
 [data-theme="light"] .dt-nav-card:hover{background:rgba(255,255,255,.9);border-color:rgba(94,92,230,.3);}
-.dt-nav-icon{font-size:26px;}
+.dt-nav-icon{font-size:26px;display:flex;align-items:center;justify-content:center;}
 .dt-nav-lbl{font-family:"neulis-sans",sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.8);}
 [data-theme="light"] .dt-nav-lbl{color:#1d1d1f;}
 .dt-nav-count{font-size:11px;color:rgba(255,255,255,.4);font-weight:500;}
@@ -97,6 +97,7 @@ html,body{height:100%;overflow:hidden;background:#07070f;cursor:none;}
 </head>
 <body>
 <canvas id="dt-bg"></canvas>
+<div id="dt-light-bg" style="position:fixed;inset:0;z-index:0;display:none;background:linear-gradient(160deg,#b0a8e0 0%,#c4bded 35%,#d8d2f5 65%,#eceaf8 100%);"></div>
 <div id="dt-cur"></div>
 
 <!-- hidden stubs for app.js -->
@@ -150,10 +151,29 @@ html,body{height:100%;overflow:hidden;background:#07070f;cursor:none;}
     </div>
     <button class="dt-start-btn" id="dt-start-btn"><span id="dt-sl">开始测验</span><span>→</span></button>
     <div class="dt-nav-grid">
-      <button class="dt-nav-card" data-goto="wordbook"><div class="dt-nav-icon">📚</div><div class="dt-nav-lbl" id="dt-lbl-wb">单词本</div><div class="dt-nav-count" id="dt-cnt-wb">0 词</div></button>
-      <button class="dt-nav-card" data-goto="wrongbook"><div class="dt-nav-icon">🎯</div><div class="dt-nav-lbl" id="dt-lbl-wg">错题本</div><div class="dt-nav-count" id="dt-cnt-wg">0 题</div></button>
-      <button class="dt-nav-card" data-goto="desk"><div class="dt-nav-icon">🗂️</div><div class="dt-nav-lbl" id="dt-lbl-dk">练习桌面</div><div class="dt-nav-count" id="dt-cnt-dk">0 待清理</div></button>
-      <button class="dt-nav-card" data-goto="profile"><div class="dt-nav-icon">👤</div><div class="dt-nav-lbl" id="dt-lbl-pf">我的</div><div class="dt-nav-count" id="dt-cnt-pf">0 次测验</div></button>
+      <button class="dt-nav-card" data-goto="wordbook"><div class="dt-nav-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5e5ce6"/><stop offset="100%" stop-color="#bf5af2"/></linearGradient></defs>
+  <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="url(#g1)"/>
+  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="url(#g1)"/>
+</svg></div><div class="dt-nav-lbl" id="dt-lbl-wb">单词本</div><div class="dt-nav-count" id="dt-cnt-wb">0 词</div></button>
+      <button class="dt-nav-card" data-goto="wrongbook"><div class="dt-nav-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#bf5af2"/><stop offset="100%" stop-color="#ff6b9d"/></linearGradient></defs>
+  <circle cx="12" cy="12" r="10" stroke="url(#g2)"/>
+  <circle cx="12" cy="12" r="6" stroke="url(#g2)"/>
+  <circle cx="12" cy="12" r="2" stroke="url(#g2)"/>
+</svg></div><div class="dt-nav-lbl" id="dt-lbl-wg">错题本</div><div class="dt-nav-count" id="dt-cnt-wg">0 题</div></button>
+      <button class="dt-nav-card" data-goto="desk"><div class="dt-nav-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#30d158"/><stop offset="100%" stop-color="#5e5ce6"/></linearGradient></defs>
+  <rect x="3" y="3" width="7" height="7" rx="1" stroke="url(#g3)"/>
+  <rect x="14" y="3" width="7" height="7" rx="1" stroke="url(#g3)"/>
+  <rect x="3" y="14" width="7" height="7" rx="1" stroke="url(#g3)"/>
+  <rect x="14" y="14" width="7" height="7" rx="1" stroke="url(#g3)"/>
+</svg></div><div class="dt-nav-lbl" id="dt-lbl-dk">练习桌面</div><div class="dt-nav-count" id="dt-cnt-dk">0 待清理</div></button>
+      <button class="dt-nav-card" data-goto="profile"><div class="dt-nav-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#64d2ff"/><stop offset="100%" stop-color="#5e5ce6"/></linearGradient></defs>
+  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="url(#g4)"/>
+  <circle cx="12" cy="7" r="4" stroke="url(#g4)"/>
+</svg></div><div class="dt-nav-lbl" id="dt-lbl-pf">我的</div><div class="dt-nav-count" id="dt-cnt-pf">0 次测验</div></button>
     </div>
   </div>
 
@@ -481,7 +501,15 @@ function renderProfile(){
 E('dt-gm').onclick=function(){var S=gs();S.dailyGoal=Math.max(1,S.dailyGoal-1);if(window.save)save();E('dt-gv').textContent=S.dailyGoal;updateStats();};
 E('dt-gp').onclick=function(){var S=gs();S.dailyGoal=Math.min(50,S.dailyGoal+1);if(window.save)save();E('dt-gv').textContent=S.dailyGoal;updateStats();};
 var html=document.documentElement;
-function syncTheme(){E('dt-theme').textContent=html.dataset.theme==='dark'?'☀':'🌙';}
+function syncTheme(){
+  var isDark=html.dataset.theme==='dark';
+  E('dt-theme').textContent=isDark?'☀':'🌙';
+  document.body.style.background=isDark?'#07070f':'#ece9f8';
+  var bg=E('dt-bg');
+  if(bg){bg.style.opacity=isDark?'1':'0';bg.style.pointerEvents=isDark?'auto':'none';}
+  var lbg=E('dt-light-bg');
+  if(lbg){lbg.style.display=isDark?'none':'block';}
+}
 html.dataset.theme=localStorage.getItem('wd_theme')||'dark';syncTheme();
 E('dt-theme').onclick=function(){html.dataset.theme=html.dataset.theme==='dark'?'light':'dark';localStorage.setItem('wd_theme',html.dataset.theme);syncTheme();};
 if(window.state)window.state.lang=isEn?'en':'zh';
