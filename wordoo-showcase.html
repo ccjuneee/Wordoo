@@ -5,398 +5,223 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wordoo — Project Showcase</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--p1:#5e5ce6;--p2:#bf5af2;--g:#30d158;--text:#f0eff8;--text2:#9896b8;--border:rgba(255,255,255,.09);}
+html,body{width:100%;height:100%;overflow:hidden;background:#07070f;}
+body{font-family:'DM Sans',sans-serif;color:var(--text);cursor:none;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 20% 20%,rgba(94,92,230,.18) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(191,90,242,.12) 0%,transparent 70%);pointer-events:none;z-index:0;}
+#bg{position:fixed;inset:0;z-index:0;}
+#cur{position:fixed;z-index:9999;pointer-events:none;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 0 16px rgba(191,90,242,.8);transform:translate(-50%,-50%);transition:width .2s,height .2s,opacity .2s;mix-blend-mode:screen;}
+#cur.big{width:28px;height:28px;opacity:.6;}
 
-  :root {
-    --purple: #5e5ce6;
-    --purple2: #bf5af2;
-    --green:  #30d158;
-    --bg:     #0a0a0f;
-    --bg2:    #12121a;
-    --surface:#1a1a28;
-    --text:   #f0eff8;
-    --text2:  #8884aa;
-    --border: rgba(255,255,255,.08);
-    --grad:   linear-gradient(135deg, #5e5ce6, #bf5af2);
-  }
+/* layout */
+.hero{position:fixed;inset:0;z-index:10;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:5vw;max-width:1200px;margin:0 auto;padding:0 6vw;}
 
-  html { scroll-behavior: smooth; }
+/* mockup col */
+.mockup-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;opacity:0;animation:fsu .8s ease .2s forwards;}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* device wrapper — crossfade */
+.device-slot{position:relative;display:flex;align-items:center;justify-content:center;}
+.device-wrap{transition:opacity .4s ease,transform .4s ease;}
+.device-wrap.hidden{opacity:0;transform:scale(.94);pointer-events:none;position:absolute;}
+.device-wrap.visible{opacity:1;transform:scale(1);pointer-events:auto;position:relative;}
 
-  /* ── AMBIENT BG ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(94,92,230,.18) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 60% at 80% 70%, rgba(191,90,242,.12) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(48,209,88,.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
+/* phone */
+.phone-outer{position:relative;filter:drop-shadow(0 40px 70px rgba(94,92,230,.42)) drop-shadow(0 20px 36px rgba(0,0,0,.6));}
+.phone-outer::before{content:'';position:absolute;inset:-24px;border-radius:64px;background:radial-gradient(ellipse at center,rgba(94,92,230,.22) 0%,transparent 70%);z-index:-1;}
+.phone-frame{width:230px;height:478px;background:#12121a;border-radius:38px;border:1.5px solid rgba(255,255,255,.18);overflow:hidden;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),inset 0 1px 0 rgba(255,255,255,.1);}
+.phone-frame::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#07070f;border-radius:999px;z-index:10;}
+.phone-screen{position:absolute;inset:0;border-radius:36px;overflow:hidden;}
+.phone-screen iframe{width:390px;height:844px;border:none;transform-origin:top left;transform:scale(0.5897);}
 
-  /* ── HERO ── */
-  .hero {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    gap: 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 60px 48px;
-  }
+/* browser */
+.browser-outer{position:relative;filter:drop-shadow(0 32px 60px rgba(94,92,230,.35)) drop-shadow(0 16px 30px rgba(0,0,0,.6));}
+.browser-outer::before{content:'';position:absolute;inset:-20px;border-radius:24px;background:radial-gradient(ellipse at center,rgba(94,92,230,.18) 0%,transparent 70%);z-index:-1;}
+.browser-frame{width:460px;height:295px;background:#1a1a28;border-radius:12px;border:1.5px solid rgba(255,255,255,.15);overflow:hidden;display:flex;flex-direction:column;}
+.browser-bar{height:32px;background:#12121e;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;padding:0 12px;gap:6px;flex-shrink:0;}
+.bd{width:10px;height:10px;border-radius:50%;}
+.bd.r{background:#ff5f57;}.bd.y{background:#febc2e;}.bd.g{background:#28c840;}
+.browser-url{flex:1;margin:0 10px;height:18px;border-radius:4px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,.3);}
+.browser-screen{flex:1;overflow:hidden;position:relative;}
+.browser-screen iframe{width:1280px;height:800px;border:none;transform-origin:top left;transform:scale(0.3594);/* 460/1280 */}
 
-  .hero-text { display: flex; flex-direction: column; gap: 24px; }
+/* switch */
+.view-switch{display:flex;gap:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:4px;}
+.vsw{padding:7px 18px;border-radius:999px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,color .2s;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;}
+.vsw.active{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;}
 
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--purple2);
-    opacity: 0;
-    animation: fadeSlideUp .6s ease .2s forwards;
-  }
-  .hero-eyebrow::before {
-    content: '';
-    width: 24px; height: 1px;
-    background: var(--purple2);
-  }
+/* text col */
+.text-col{display:flex;flex-direction:column;gap:20px;opacity:0;animation:fsu .8s ease .35s forwards;}
+@keyframes fsu{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 
-  .hero-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(52px, 6vw, 80px);
-    line-height: 1.05;
-    letter-spacing: -.02em;
-    opacity: 0;
-    animation: fadeSlideUp .7s ease .35s forwards;
-  }
-  .hero-title .gradient-word {
-    background: var(--grad);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-desc {
-    font-size: 16px;
-    line-height: 1.75;
-    color: var(--text2);
-    max-width: 440px;
-    opacity: 0;
-    animation: fadeSlideUp .7s ease .5s forwards;
-  }
-
-  .hero-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    opacity: 0;
-    animation: fadeSlideUp .7s ease .65s forwards;
-  }
-  .tag {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 5px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    color: var(--text2);
-    background: var(--surface);
-  }
-  .tag.accent {
-    border-color: rgba(94,92,230,.4);
-    color: #a09ee8;
-    background: rgba(94,92,230,.1);
-  }
-
-  .hero-cta {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    opacity: 0;
-    animation: fadeSlideUp .7s ease .8s forwards;
-  }
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 13px 28px;
-    border-radius: 999px;
-    background: var(--grad);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: opacity .2s, transform .15s;
-    box-shadow: 0 8px 32px rgba(94,92,230,.4);
-  }
-  .btn-primary:hover { opacity: .88; transform: translateY(-2px); }
-  .btn-ghost {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text2);
-    text-decoration: none;
-    transition: color .2s;
-  }
-  .btn-ghost:hover { color: var(--text); }
-
-  /* ── PHONE FRAME ── */
-  .phone-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    animation: fadeSlideUp .8s ease .45s forwards;
-  }
-
-  .phone-outer {
-    position: relative;
-    width: 280px;
-    filter: drop-shadow(0 40px 80px rgba(94,92,230,.35)) drop-shadow(0 20px 40px rgba(0,0,0,.6));
-  }
-
-  /* glow ring behind phone */
-  .phone-outer::before {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    border-radius: 60px;
-    background: radial-gradient(ellipse at center, rgba(94,92,230,.3) 0%, transparent 70%);
-    z-index: -1;
-    animation: glowPulse 4s ease-in-out infinite;
-  }
-  @keyframes glowPulse {
-    0%,100% { opacity: .6; transform: scale(1); }
-    50%      { opacity: 1;  transform: scale(1.05); }
-  }
-
-  .phone-frame {
-    position: relative;
-    width: 280px;
-    height: 580px;
-    background: #1a1a1f;
-    border-radius: 44px;
-    border: 2px solid rgba(255,255,255,.15);
-    overflow: hidden;
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.06),
-      inset 0 1px 0 rgba(255,255,255,.12);
-  }
-
-  /* notch */
-  .phone-frame::before {
-    content: '';
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 28px;
-    background: #0a0a0f;
-    border-radius: 999px;
-    z-index: 10;
-  }
-
-  /* side buttons */
-  .phone-frame::after {
-    content: '';
-    position: absolute;
-    right: -3px;
-    top: 100px;
-    width: 3px;
-    height: 60px;
-    background: rgba(255,255,255,.1);
-    border-radius: 0 2px 2px 0;
-    box-shadow: 0 80px 0 rgba(255,255,255,.1);
-  }
-
-  .phone-screen {
-    position: absolute;
-    inset: 0;
-    border-radius: 42px;
-    overflow: hidden;
-  }
-
-  .phone-screen iframe {
-    width: 390px;
-    height: 844px;
-    border: none;
-    transform-origin: top left;
-    transform: scale(0.7179);  /* 280/390 */
-    pointer-events: auto;
-  }
-
-  /* ── FEATURES STRIP ── */
-  .features {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 80px 48px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .feature-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: border-color .2s, transform .2s;
-  }
-  .feature-card:hover {
-    border-color: rgba(94,92,230,.4);
-    transform: translateY(-4px);
-  }
-  .feature-icon {
-    font-size: 28px;
-    line-height: 1;
-  }
-  .feature-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 20px;
-    letter-spacing: -.01em;
-  }
-  .feature-desc {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--text2);
-  }
-
-  /* ── FOOTER ── */
-  .showcase-footer {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 40px 48px 60px;
-    font-size: 13px;
-    color: var(--text2);
-    border-top: 1px solid var(--border);
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .showcase-footer a { color: var(--purple2); text-decoration: none; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 860px) {
-    .hero {
-      grid-template-columns: 1fr;
-      text-align: center;
-      padding: 48px 24px;
-      gap: 48px;
-    }
-    .hero-text { align-items: center; }
-    .hero-desc { max-width: 100%; }
-    .phone-wrap { order: -1; }
-    .phone-outer { width: 220px; }
-    .phone-frame { width: 220px; height: 456px; border-radius: 36px; }
-    .phone-frame::before { width: 80px; height: 22px; }
-    .phone-screen iframe { transform: scale(0.5641); }
-    .features { grid-template-columns: 1fr; padding: 40px 24px; }
-    .showcase-footer { padding: 32px 24px 48px; }
-  }
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--p2);}
+.eyebrow::before{content:'';width:28px;height:1px;background:var(--p2);}
+.title{font-family:'DM Serif Display',serif;font-size:clamp(40px,4.5vw,66px);line-height:1.04;letter-spacing:-.025em;}
+.title .gr{background:linear-gradient(130deg,#5e5ce6 0%,#bf5af2 50%,#30d158 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.desc{font-size:15px;line-height:1.8;color:var(--text2);max-width:400px;}
+.pills{display:flex;flex-wrap:wrap;gap:7px;}
+.pill{font-size:12px;font-weight:500;padding:5px 13px;border-radius:999px;border:1px solid var(--border);color:var(--text2);background:rgba(255,255,255,.04);}
+.pill.a{border-color:rgba(94,92,230,.4);color:#a8a5f0;background:rgba(94,92,230,.1);}
+.features{display:flex;flex-direction:column;gap:9px;}
+.feat{display:flex;align-items:flex-start;gap:13px;padding:13px 16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;transition:border-color .2s,background .2s,transform .2s;}
+.feat:hover{border-color:rgba(94,92,230,.35);background:rgba(94,92,230,.08);transform:translateX(4px);}
+.feat-icon{flex-shrink:0;display:flex;align-items:center;margin-top:2px;}
+.feat-title{font-size:14px;font-weight:600;margin-bottom:2px;}
+.feat-desc{font-size:13px;color:var(--text2);line-height:1.5;}
+.cta-row{display:flex;align-items:center;gap:16px;}
+.btn-live{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:999px;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 8px 28px rgba(94,92,230,.4);transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden;}
+.btn-live::after{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.22) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
+.btn-live:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(94,92,230,.6);}
+.btn-live:hover::after{opacity:1;}
+.btn-gh{font-size:14px;font-weight:500;color:var(--text2);text-decoration:none;transition:color .2s;}
+.btn-gh:hover{color:var(--text);}
 </style>
 </head>
 <body>
+<canvas id="bg"></canvas>
+<div id="cur"></div>
 
-<section class="hero">
-  <div class="hero-text">
-    <span class="hero-eyebrow">Web Dev Final Project</span>
+<div class="hero">
 
-    <h1 class="hero-title">
-      Meet<br>
-      <span class="gradient-word">Wordoo.</span>
-    </h1>
+  <!-- LEFT -->
+  <div class="mockup-col">
+    <div class="device-slot">
 
-    <p class="hero-desc">
-      An AI-powered vocabulary app I built from scratch. Add your own words,
-      take smart quizzes, and clear your mistake desk — in English or Chinese.
-    </p>
-
-    <div class="hero-tags">
-      <span class="tag accent">HTML / CSS / JS</span>
-      <span class="tag accent">Node.js + Express</span>
-      <span class="tag accent">Hugging Face AI</span>
-      <span class="tag">Dark &amp; Light Mode</span>
-      <span class="tag">i18n EN/ZH</span>
-      <span class="tag">PWA Ready</span>
-    </div>
-
-    <div class="hero-cta">
-      <a class="btn-primary" href="https://ccjuneee.github.io/Wordoo/index.html" target="_blank">
-        Try it live ↗
-      </a>
-      <a class="btn-ghost" href="https://github.com/ccjuneee/Wordoo" target="_blank">
-        GitHub →
-      </a>
-    </div>
-  </div>
-
-  <div class="phone-wrap">
-    <div class="phone-outer">
-      <div class="phone-frame">
-        <div class="phone-screen">
-          <iframe
-            src="https://ccjuneee.github.io/Wordoo/index.html"
-            title="Wordoo App"
-            loading="lazy"
-            allow="autoplay"
-          ></iframe>
+      <!-- Mobile phone -->
+      <div class="device-wrap hidden" id="dw-mobile">
+        <div class="phone-outer">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe src="https://ccjuneee.github.io/Wordoo/index.html" title="Wordoo Mobile" loading="lazy"></iframe>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- Desktop browser -->
+      <div class="device-wrap visible" id="dw-desktop">
+        <div class="browser-outer">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <div class="bd r"></div><div class="bd y"></div><div class="bd g"></div>
+              <div class="browser-url">ccjuneee.github.io/Wordoo/desktop.html</div>
+            </div>
+            <div class="browser-screen">
+              <iframe src="https://ccjuneee.github.io/Wordoo/desktop.html" title="Wordoo Desktop" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Switch buttons below device -->
+    <div class="view-switch">
+      <button class="vsw" id="vsw-mobile" onclick="setView('mobile')">📱 Mobile</button>
+      <button class="vsw active" id="vsw-desktop" onclick="setView('desktop')">🖥 Desktop</button>
     </div>
   </div>
-</section>
 
-<section class="features">
-  <div class="feature-card">
-    <div class="feature-icon">📚</div>
-    <div class="feature-title">Smart Word Book</div>
-    <div class="feature-desc">Add any English word — definitions and pronunciation fill in automatically via dictionary API. No manual typing needed.</div>
+  <!-- RIGHT -->
+  <div class="text-col">
+    <span class="eyebrow">Final Project · Web Dev</span>
+    <h1 class="title">My words,<br><span class="gr">my pace.</span></h1>
+    <p class="desc">An AI-powered vocab app built from scratch. Add your own words, take smart quizzes, and clear your mistake desk — in English or Chinese.</p>
+    <div class="pills">
+      <span class="pill a">HTML / CSS / JS</span>
+      <span class="pill a">Node.js + Express</span>
+      <span class="pill a">Hugging Face AI</span>
+      <span class="pill">Dark &amp; Light Mode</span>
+      <span class="pill">EN / ZH</span>
+      <span class="pill">PWA Ready</span>
+    </div>
+    <div class="features">
+      <div class="feat">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <defs><linearGradient id="fi1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5e5ce6"/><stop offset="100%" stop-color="#bf5af2"/></linearGradient></defs>
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="url(#fi1)"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="url(#fi1)"/>
+          </svg>
+        </div>
+        <div class="feat-body"><div class="feat-title">Smart Word Book</div><div class="feat-desc">Definitions &amp; pronunciation auto-filled via dictionary API.</div></div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <defs><linearGradient id="fi2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#bf5af2"/><stop offset="100%" stop-color="#ff6b9d"/></linearGradient></defs>
+            <circle cx="12" cy="12" r="10" stroke="url(#fi2)"/>
+            <circle cx="12" cy="12" r="6"  stroke="url(#fi2)"/>
+            <circle cx="12" cy="12" r="2"  stroke="url(#fi2)"/>
+          </svg>
+        </div>
+        <div class="feat-body"><div class="feat-title">AI Quiz Engine</div><div class="feat-desc">Three question types. Smart distractors. AI explanations.</div></div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <defs><linearGradient id="fi3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#30d158"/><stop offset="100%" stop-color="#5e5ce6"/></linearGradient></defs>
+            <rect x="3"  y="3"  width="7" height="7" rx="1" stroke="url(#fi3)"/>
+            <rect x="14" y="3"  width="7" height="7" rx="1" stroke="url(#fi3)"/>
+            <rect x="3"  y="14" width="7" height="7" rx="1" stroke="url(#fi3)"/>
+            <rect x="14" y="14" width="7" height="7" rx="1" stroke="url(#fi3)"/>
+          </svg>
+        </div>
+        <div class="feat-body"><div class="feat-title">Practice Desk</div><div class="feat-desc">Wrong words become colour blocks. Clear them by learning.</div></div>
+      </div>
+    </div>
+    <div class="cta-row">
+      <a class="btn-live" id="btn-live" href="https://ccjuneee.github.io/Wordoo/desktop.html" target="_blank">Try it live ↗</a>
+      <a class="btn-gh" href="https://github.com/ccjuneee/Wordoo" target="_blank">GitHub →</a>
+    </div>
   </div>
-  <div class="feature-card">
-    <div class="feature-icon">🧠</div>
-    <div class="feature-title">AI Quiz Engine</div>
-    <div class="feature-desc">Three quiz formats: fill-in-the-blank, multiple choice, and guess the word. Get AI-powered explanations after every answer.</div>
-  </div>
-  <div class="feature-card">
-    <div class="feature-icon">🗂️</div>
-    <div class="feature-title">Mistake Practice</div>
-    <div class="feature-desc">Wrong answers appear as coloured blocks in your practice desk. Blocks get deeper and bolder the more times you miss a word.</div>
-  </div>
-</section>
+</div>
 
-<footer class="showcase-footer">
-  Built by <a href="#">June Cheng</a> · 2026 ·
-  <a href="https://ccjuneee.github.io/Wordoo/index.html" target="_blank">Live Demo</a> ·
-  <a href="https://github.com/ccjuneee/Wordoo" target="_blank">Source Code</a>
-</footer>
+<script>
+function setView(v) {
+  var mw=document.getElementById('dw-mobile');
+  var dw=document.getElementById('dw-desktop');
+  var bm=document.getElementById('vsw-mobile');
+  var bd=document.getElementById('vsw-desktop');
+  var bl=document.getElementById('btn-live');
+  if(v==='mobile'){
+    mw.className='device-wrap visible'; dw.className='device-wrap hidden';
+    bm.classList.add('active'); bd.classList.remove('active');
+    bl.href='https://ccjuneee.github.io/Wordoo/index.html';
+  } else {
+    dw.className='device-wrap visible'; mw.className='device-wrap hidden';
+    bd.classList.add('active'); bm.classList.remove('active');
+    bl.href='https://ccjuneee.github.io/Wordoo/desktop.html';
+  }
+}
 
+var curEl=document.getElementById('cur'),cx=0,cy=0,tx=0,ty=0;
+document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;});
+(function loop(){cx+=(tx-cx)*.16;cy+=(ty-cy)*.16;curEl.style.left=cx+'px';curEl.style.top=cy+'px';requestAnimationFrame(loop);})();
+document.addEventListener('mouseover',function(e){if(e.target.closest('a,button,.feat,.pill'))curEl.classList.add('big');});
+document.addEventListener('mouseout',function(e){if(e.target.closest('a,button,.feat,.pill'))curEl.classList.remove('big');});
+var bl2=document.getElementById('btn-live');
+bl2.addEventListener('mousemove',function(e){var r=bl2.getBoundingClientRect();bl2.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');bl2.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');});
+
+(function(){
+  var c=document.getElementById('bg'),W=innerWidth,H=innerHeight;
+  var gl=c.getContext('webgl')||c.getContext('experimental-webgl');
+  if(!gl){c.style.background='radial-gradient(ellipse at 30% 30%,#1a0a3a,#07070f)';return;}
+  function resize(){c.width=W=innerWidth;c.height=H=innerHeight;gl.viewport(0,0,W,H);}
+  resize();window.addEventListener('resize',resize);
+  var vs='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+  var fs='precision highp float;uniform float uT;uniform vec2 uM,uR;float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.1+vec2(1.3,1.7);a*=.5;}return v;}void main(){vec2 uv=gl_FragCoord.xy/uR;float t=uT*.11;vec2 m=uM;float d=length(uv-m);uv+=normalize(uv-m+.001)*(-smoothstep(.75,0.,d)*.16);float nn=fbm(uv*2.2+vec2(t,t*.7))*fbm(uv*1.5-vec2(t*.4,t*.9));nn*=2.;vec3 a=vec3(.026,.018,.09),b=vec3(.09,.05,.28),cc=vec3(.26,.08,.48);vec3 col=nn<1.?mix(mix(a,b,clamp(nn,0.,1.)),cc,0.):mix(cc,a,clamp(nn-1.,0.,1.));col=mix(col,vec3(.04,.18,.10),fbm(uv*1.8+vec2(-t*.3,0.))*.10*(1.-uv.y));col*=1.-smoothstep(.25,.85,length((uv-.5)*1.4))*.55;gl_FragColor=vec4(col,1.);}';
+  function sh(t,s){var x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);return x;}
+  var p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,vs));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);gl.useProgram(p);
+  var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  var al=gl.getAttribLocation(p,'a');gl.enableVertexAttribArray(al);gl.vertexAttribPointer(al,2,gl.FLOAT,false,0,0);
+  var uT=gl.getUniformLocation(p,'uT'),uM=gl.getUniformLocation(p,'uM'),uR=gl.getUniformLocation(p,'uR');
+  var mx=.5,my=.5,tx2=.5,ty2=.5,t=0;
+  document.addEventListener('mousemove',function(e){tx2=e.clientX/W;ty2=1-e.clientY/H;});
+  (function loop(){requestAnimationFrame(loop);t+=.016;mx+=(tx2-mx)*.05;my+=(ty2-my)*.05;gl.uniform1f(uT,t);gl.uniform2f(uM,mx,my);gl.uniform2f(uR,c.width,c.height);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);})();
+})();
+</script>
 </body>
 </html>

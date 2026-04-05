@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wordoo</title>
+<link rel="stylesheet" href="https://use.typekit.net/lel4jfe.css">
+<link rel="stylesheet" href="style.css">
+<style>
+html,body{height:100%;overflow:hidden;background:#07070f;cursor:none;}
+#app{display:none!important;position:absolute;opacity:0;pointer-events:none;width:0;height:0;overflow:hidden;}
+#dt-bg{position:fixed;inset:0;z-index:0;}
+#dt-cur{position:fixed;z-index:9999;pointer-events:none;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);transition:width .18s,height .18s,opacity .18s;}
+[data-theme="dark"]  #dt-cur{background:rgba(255,255,255,.92);box-shadow:0 0 14px rgba(191,90,242,.7);}
+[data-theme="light"] #dt-cur{background:rgba(94,92,230,.9);box-shadow:0 0 14px rgba(94,92,230,.5);}
+#dt-cur.big{width:24px;height:24px;opacity:.55;}
+#dt-shell{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.dt-panel{display:none;flex-direction:column;align-items:center;width:100%;max-width:860px;padding:0 32px;animation:dtIn .28s ease both;}
+.dt-panel.active{display:flex;}
+@keyframes dtIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+#dt-topbar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:20px 36px;}
+.dt-logo{display:flex;align-items:baseline;}
+.dt-logo .logo-word{font-family:"neulis-sans",sans-serif;font-weight:700;font-size:22px;letter-spacing:-1px;color:#fff;}
+.dt-logo .logo-oo{font-family:"neulis-sans",sans-serif;font-weight:700;font-size:22px;letter-spacing:-5px;padding-right:5px;background:linear-gradient(135deg,#5e5ce6,#bf5af2,#30d158);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:inline-block;}
+[data-theme="light"] .dt-logo .logo-word{color:#1d1d1f;}
+.dt-top-controls{display:flex;gap:10px;align-items:center;}
+.dt-ctrl{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.1);backdrop-filter:blur(10px);color:rgba(255,255,255,.85);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,transform .15s;text-decoration:none;font-family:"neulis-sans",sans-serif;}
+.dt-ctrl:hover{background:rgba(255,255,255,.22);transform:scale(1.08);}
+[data-theme="light"] .dt-ctrl{border-color:rgba(0,0,0,.12);background:rgba(255,255,255,.6);color:#1d1d1f;}
+.dt-home-title{font-family:"neulis-sans",sans-serif;font-size:clamp(40px,5.5vw,72px);font-weight:700;letter-spacing:-2px;color:#fff;text-align:center;line-height:1.05;margin-bottom:10px;}
+[data-theme="light"] .dt-home-title{color:#1d1d1f;}
+.dt-home-sub{font-family:"poppins",sans-serif;font-size:16px;color:rgba(255,255,255,.45);text-align:center;margin-bottom:44px;}
+[data-theme="light"] .dt-home-sub{color:rgba(0,0,0,.4);}
+.dt-pills-row{display:flex;gap:10px;margin-bottom:44px;}
+.dt-pill{padding:8px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(8px);font-size:14px;font-weight:600;color:rgba(255,255,255,.8);}
+[data-theme="light"] .dt-pill{border-color:rgba(0,0,0,.1);background:rgba(0,0,0,.06);color:#1d1d1f;}
+.dt-start-btn{width:100%;max-width:500px;padding:20px 40px;border-radius:18px;background:linear-gradient(135deg,#5e5ce6,#bf5af2);border:none;color:#fff;font-family:"neulis-sans",sans-serif;font-size:18px;font-weight:700;cursor:pointer;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 12px 40px rgba(94,92,230,.45);transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden;}
+.dt-start-btn::after{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.2) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
+.dt-start-btn:hover{transform:translateY(-3px);box-shadow:0 18px 48px rgba(94,92,230,.6);}
+.dt-start-btn:hover::after{opacity:1;}
+.dt-start-btn:active{transform:scale(.98);}
+.dt-nav-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;}
+.dt-nav-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);border-radius:16px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:background .2s,transform .18s,border-color .2s;}
+.dt-nav-card:hover{background:rgba(255,255,255,.13);transform:translateY(-4px);border-color:rgba(94,92,230,.4);}
+[data-theme="light"] .dt-nav-card{background:rgba(255,255,255,.65);border-color:rgba(0,0,0,.08);}
+[data-theme="light"] .dt-nav-card:hover{background:rgba(255,255,255,.9);border-color:rgba(94,92,230,.3);}
+.dt-nav-icon{font-size:26px;}
+.dt-nav-lbl{font-family:"neulis-sans",sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.8);}
+[data-theme="light"] .dt-nav-lbl{color:#1d1d1f;}
+.dt-nav-count{font-size:11px;color:rgba(255,255,255,.4);font-weight:500;}
+[data-theme="light"] .dt-nav-count{color:rgba(0,0,0,.4);}
+.dt-content-box{width:100%;max-width:860px;background:rgba(15,14,28,.82);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.1);border-radius:24px;overflow:hidden;max-height:calc(100vh - 140px);display:flex;flex-direction:column;}
+[data-theme="light"] .dt-content-box{background:rgba(255,255,255,.82);border-color:rgba(0,0,0,.08);}
+.dt-content-head{display:flex;align-items:center;justify-content:space-between;padding:22px 28px 18px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;}
+[data-theme="light"] .dt-content-head{border-color:rgba(0,0,0,.07);}
+.dt-back-btn{width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.dt-back-btn:hover{background:rgba(255,255,255,.18);}
+[data-theme="light"] .dt-back-btn{border-color:rgba(0,0,0,.1);background:rgba(0,0,0,.05);color:#1d1d1f;}
+.dt-content-title{font-family:"neulis-sans",sans-serif;font-size:17px;font-weight:700;color:#fff;}
+[data-theme="light"] .dt-content-title{color:#1d1d1f;}
+.dt-content-action{display:flex;gap:8px;align-items:center;}
+.dt-content-body{flex:1;overflow-y:auto;padding:20px 28px 28px;}
+.dt-content-body::-webkit-scrollbar{width:3px;}
+.dt-content-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:999px;}
+.dt-word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+.dt-search-bar{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 16px;margin-bottom:16px;}
+[data-theme="light"] .dt-search-bar{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1);}
+.dt-search-bar input{flex:1;border:none;background:transparent;font-family:"poppins",sans-serif;font-size:14px;color:var(--text);outline:none;}
+.dt-search-bar input::placeholder{color:var(--text3);}
+.dt-desk-wrap{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
+.dt-desk-wrap .word-block{position:static!important;animation:dtBlockIn .4s cubic-bezier(.34,1.3,.64,1) both;}
+@keyframes dtBlockIn{from{opacity:0;transform:scale(.82) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.dt-icon-btn{width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .12s;}
+.dt-icon-btn:hover{background:rgba(255,255,255,.18);transform:scale(1.08);color:#fff;}
+[data-theme="light"] .dt-icon-btn{border-color:rgba(0,0,0,.1);background:rgba(0,0,0,.05);color:#1d1d1f;}
+.dt-practice-btn{padding:7px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,#5e5ce6,#bf5af2);color:#fff;font-family:"neulis-sans",sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(94,92,230,.35);transition:transform .12s,box-shadow .15s;}
+.dt-practice-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(94,92,230,.55);}
+.dt-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:60px 20px;color:var(--text2);}
+.dt-empty-icon{font-size:40px;}
+.dt-empty-title{font-family:"neulis-sans",sans-serif;font-size:17px;font-weight:700;color:var(--text);}
+.dt-empty-sub{font-size:13px;}
+.dt-quiz-inner .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.dt-profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.dt-mini-stats{display:flex;gap:10px;}
+.dt-mini-stat{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;text-align:center;}
+[data-theme="light"] .dt-mini-stat{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.07);}
+.dt-mini-stat.acc{background:linear-gradient(135deg,rgba(94,92,230,.3),rgba(191,90,242,.2));border-color:rgba(94,92,230,.3);}
+.dt-mini-num{font-family:"neulis-sans",sans-serif;font-size:28px;font-weight:700;color:var(--text);}
+.dt-mini-lbl{font-size:11px;color:var(--text2);margin-top:2px;}
+.dt-goal-row{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px 20px;margin-top:14px;}
+[data-theme="light"] .dt-goal-row{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.07);}
+.dt-goal-lbl{font-size:13px;color:var(--text2);}
+.dt-goal-val{font-family:"neulis-sans",sans-serif;font-size:22px;font-weight:700;color:var(--text);min-width:28px;text-align:center;}
+.dt-hist-item{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;color:var(--text2);}
+[data-theme="light"] .dt-hist-item{border-color:rgba(0,0,0,.07);}
+</style>
+</head>
+<body>
+<canvas id="dt-bg"></canvas>
+<div id="dt-cur"></div>
+
+<!-- hidden stubs for app.js -->
+<div id="app">
+  <div class="screen active" id="screen-home"></div>
+  <div class="screen" id="screen-wordbook"></div>
+  <div class="screen" id="screen-wrongbook"></div>
+  <div class="screen" id="screen-profile"></div>
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-nav"><button class="back-btn" data-back="home">✕</button><div class="prog-track"><div class="prog-fill" id="quiz-prog-fill"></div></div><span class="prog-label" id="quiz-prog-text">1/5</span><div class="score-pill" id="quiz-score-badge">0</div></div>
+    <div class="quiz-body" id="quiz-body"></div>
+  </div>
+  <div class="screen" id="screen-desk"><div class="desk-surface" id="desk-surface"><div class="desk-empty" id="desk-empty"><div class="desk-empty-text" id="desk-empty-text"></div><div class="desk-empty-sub" id="desk-empty-sub"></div></div></div><div class="desk-trash-count" id="trash-count"></div></div>
+  <div class="screen" id="screen-result"><div class="result-wrap" id="result-body"></div></div>
+  <div id="word-list"></div><div id="wrong-list"></div>
+  <div id="empty-words" hidden></div><div id="empty-wrong" hidden></div>
+  <div id="empty-history"></div><div id="history-list"></div>
+  <div id="stat-total">0</div><div id="stat-mastered">0</div><div id="stat-wrong">0</div>
+  <div id="streak-count">0</div><div id="ring-text">0/5</div><div id="hero-title"></div>
+  <div id="p-streak">0</div><div id="p-sessions">0</div><div id="p-accuracy">—</div><div id="goal-display">5</div>
+  <button id="btn-theme"></button><button id="btn-lang"></button><button id="btn-profile"></button>
+  <button id="btn-wordbook"></button><button id="btn-wrongbook"></button><button id="btn-start-quiz"></button><button id="btn-add-word"></button>
+  <button id="btn-clear-wrong" style="display:none"></button><button id="btn-go-practice" style="display:none"></button>
+  <button id="goal-minus"></button><button id="goal-plus"></button>
+  <input id="search-input" style="display:none"><input id="input-word" style="display:none"><input id="input-meaning" style="display:none"><input id="input-example" style="display:none">
+  <div id="lookup-status"></div><button id="confirm-add-word" style="display:none"></button>
+  <div id="modal-add" hidden></div>
+  <div id="modal-desk-quiz" hidden><button id="dq-close"></button><div id="dq-title"></div><div id="dq-prompt"></div><div id="dq-meaning"></div><div id="dq-example"></div><input id="dq-input" style="display:none"><div id="dq-feedback"></div><button id="dq-submit"><span id="dq-btn-text"></span></button></div>
+  <div id="desk-bin" style="display:none"></div>
+</div>
+
+<!-- TOP BAR -->
+<div id="dt-topbar">
+  <div class="dt-logo"><span class="logo-word">Word</span><span class="logo-oo">oo</span></div>
+  <div class="dt-top-controls">
+    <button class="dt-ctrl" id="dt-theme">☀</button>
+    <button class="dt-ctrl" id="dt-lang">EN</button>
+    <a class="dt-ctrl" href="index.html" title="手机版">📱</a>
+  </div>
+</div>
+
+<div id="dt-shell">
+
+  <!-- HOME -->
+  <div class="dt-panel active" id="dp-home">
+    <div class="dt-home-title" id="dt-hero">今天学几个词？</div>
+    <div class="dt-home-sub">My words, my pace.</div>
+    <div class="dt-pills-row">
+      <div class="dt-pill">🔥 <span id="dt-streak">0</span> <span id="dt-su">天连续</span></div>
+      <div class="dt-pill"><span id="dt-tl">今日</span> <span id="dt-today">0/5</span></div>
+    </div>
+    <button class="dt-start-btn" id="dt-start-btn"><span id="dt-sl">开始测验</span><span>→</span></button>
+    <div class="dt-nav-grid">
+      <button class="dt-nav-card" data-goto="wordbook"><div class="dt-nav-icon">📚</div><div class="dt-nav-lbl" id="dt-lbl-wb">单词本</div><div class="dt-nav-count" id="dt-cnt-wb">0 词</div></button>
+      <button class="dt-nav-card" data-goto="wrongbook"><div class="dt-nav-icon">🎯</div><div class="dt-nav-lbl" id="dt-lbl-wg">错题本</div><div class="dt-nav-count" id="dt-cnt-wg">0 题</div></button>
+      <button class="dt-nav-card" data-goto="desk"><div class="dt-nav-icon">🗂️</div><div class="dt-nav-lbl" id="dt-lbl-dk">练习桌面</div><div class="dt-nav-count" id="dt-cnt-dk">0 待清理</div></button>
+      <button class="dt-nav-card" data-goto="profile"><div class="dt-nav-icon">👤</div><div class="dt-nav-lbl" id="dt-lbl-pf">我的</div><div class="dt-nav-count" id="dt-cnt-pf">0 次测验</div></button>
+    </div>
+  </div>
+
+  <!-- WORDBOOK -->
+  <div class="dt-panel" id="dp-wordbook">
+    <div class="dt-content-box">
+      <div class="dt-content-head">
+        <button class="dt-back-btn" data-goto="home">‹</button>
+        <span class="dt-content-title" id="dt-t-wb">单词本</span>
+        <div class="dt-content-action">
+          <button class="dt-icon-btn" id="dt-add-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+      </div>
+      <div class="dt-content-body">
+        <div class="dt-search-bar">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="color:var(--text3);flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="dt-search" type="text" placeholder="搜索…" autocomplete="off">
+        </div>
+        <div class="dt-word-grid" id="dt-wg"></div>
+        <div class="dt-empty" id="dt-ew" style="display:none"><div class="dt-empty-icon">📭</div><div class="dt-empty-title" id="dt-ew-t">还没有单词</div><div class="dt-empty-sub" id="dt-ew-s">点右上角 + 添加</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WRONGBOOK -->
+  <div class="dt-panel" id="dp-wrongbook">
+    <div class="dt-content-box">
+      <div class="dt-content-head">
+        <button class="dt-back-btn" data-goto="home">‹</button>
+        <span class="dt-content-title" id="dt-t-wg">错题本</span>
+        <div class="dt-content-action"><button class="dt-practice-btn" id="dt-prac-btn">练习</button></div>
+      </div>
+      <div class="dt-content-body">
+        <div class="dt-word-grid" id="dt-wrong-g"></div>
+        <div class="dt-empty" id="dt-ewg" style="display:none"><div class="dt-empty-icon">🎉</div><div class="dt-empty-title" id="dt-nwt">暂无错题</div><div class="dt-empty-sub" id="dt-nws">继续保持！</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESK -->
+  <div class="dt-panel" id="dp-desk">
+    <div class="dt-content-box">
+      <div class="dt-content-head">
+        <button class="dt-back-btn" data-goto="wrongbook">‹</button>
+        <span class="dt-content-title" id="dt-t-dk">练习桌面</span>
+        <span class="desk-trash-count" id="dt-trash">🗑 0</span>
+      </div>
+      <div class="dt-content-body">
+        <div class="dt-desk-wrap" id="dt-dw"></div>
+        <div class="dt-empty" id="dt-edk" style="display:none"><div class="dt-empty-icon">✨</div><div class="dt-empty-title" id="dt-dkt">全部答对了！</div><div class="dt-empty-sub" id="dt-dks">答错题才会出现在这里</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="dt-panel" id="dp-quiz">
+    <div class="dt-content-box">
+      <div class="dt-content-head" style="padding-bottom:14px">
+        <button class="dt-back-btn" id="dt-quit">✕</button>
+        <div style="flex:1;display:flex;align-items:center;gap:12px;margin:0 16px">
+          <div class="prog-track" style="flex:1"><div class="prog-fill" id="dt-pf"></div></div>
+          <span class="prog-label" id="dt-pt" style="white-space:nowrap">1/5</span>
+        </div>
+        <div class="score-pill" id="dt-sc">0分</div>
+      </div>
+      <div class="dt-content-body" style="display:flex;align-items:center;justify-content:center;min-height:340px">
+        <div id="dt-qb" class="dt-quiz-inner" style="width:100%;max-width:520px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="dt-panel" id="dp-profile">
+    <div class="dt-content-box">
+      <div class="dt-content-head">
+        <button class="dt-back-btn" data-goto="home">‹</button>
+        <span class="dt-content-title" id="dt-t-pf">我的</span>
+        <div style="width:32px"></div>
+      </div>
+      <div class="dt-content-body">
+        <div class="dt-profile-grid">
+          <div>
+            <div class="dt-mini-stats">
+              <div class="dt-mini-stat"><div class="dt-mini-num" id="dt-ps">0</div><div class="dt-mini-lbl" id="dt-psl">连续天数</div></div>
+              <div class="dt-mini-stat acc"><div class="dt-mini-num" id="dt-pq">0</div><div class="dt-mini-lbl" id="dt-pql">测验次数</div></div>
+              <div class="dt-mini-stat"><div class="dt-mini-num" id="dt-pa">—</div><div class="dt-mini-lbl" id="dt-pal">正确率</div></div>
+            </div>
+            <div class="dt-goal-row">
+              <span class="dt-goal-lbl" id="dt-pd">每天做</span>
+              <button class="step-btn" id="dt-gm">−</button>
+              <span class="dt-goal-val" id="dt-gv">5</span>
+              <button class="step-btn" id="dt-gp">+</button>
+              <span class="dt-goal-lbl" id="dt-qu">题</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px" id="dt-hl">历史记录</div>
+            <div id="dt-hist"></div>
+            <div style="font-size:13px;color:var(--text3)" id="dt-nh">完成测验后这里会出现记录</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD WORD MODAL -->
+<div class="modal-overlay" id="dt-modal" hidden>
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><span class="modal-title" id="dt-mt">添加单词</span><button class="icon-btn" id="dt-mc">✕</button></div>
+    <label class="field-label"><span id="dt-wl">单词</span> <span class="req">*</span></label>
+    <input class="field-input" id="dt-iw" type="text" placeholder="e.g. ephemeral" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="lookup-status" id="dt-ls"></div>
+    <label class="field-label" id="dt-ml">释义（自动填入，可修改）</label>
+    <input class="field-input" id="dt-im" type="text" placeholder="查词中…">
+    <label class="field-label" id="dt-el">例句（可选）</label>
+    <input class="field-input" id="dt-ie" type="text" placeholder="可选">
+    <button class="cta-btn" id="dt-ca" style="margin-top:8px"><span id="dt-cl">添加单词</span><div class="cta-icon">+</div></button>
+  </div>
+</div>
+
+<!-- DESK QUIZ MODAL -->
+<div class="modal-overlay" id="modal-desk-quiz" hidden>
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><span class="modal-title" id="dq-title">复习</span><button class="icon-btn" id="dq-close">✕</button></div>
+    <div class="dq-prompt" id="dq-prompt">看释义写英文单词</div>
+    <div class="dq-meaning" id="dq-meaning"></div>
+    <div class="dq-example" id="dq-example"></div>
+    <input class="field-input" id="dq-input" type="text" placeholder="输入英文单词…" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="dq-feedback" id="dq-feedback"></div>
+    <button class="cta-btn" id="dq-submit"><span id="dq-btn-text">确认</span><div class="cta-icon">→</div></button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js?v=35"></script>
+<script>
+(function(){
+var E=function(id){return document.getElementById(id);};
+var isEn=(localStorage.getItem('wd_lang')||'zh')==='en';
+var L={
+  zh:{hero:'今天学几个词？',start:'开始测验',streak:'天连续',today:'今日',
+    wb:'单词本',wg:'错题本',dk:'练习桌面',pf:'我的',
+    words:'词',wrongs:'题',pending:'待清理',quizzes:'次测验',
+    add:'添加单词',wl:'单词',ml:'释义（自动填入，可修改）',el:'例句（可选）',cl:'添加单词',
+    ewt:'还没有单词',ews:'点右上角 + 添加',nwt:'暂无错题',nws:'继续保持！',
+    dkt:'全部答对了！',dks:'答错题才会出现在这里',
+    prac:'练习',search:'搜索…',
+    psl:'连续天数',pql:'测验次数',pal:'正确率',
+    pd:'每天做',qu:'题',hl:'历史记录',nh:'完成测验后这里会出现记录',
+    ws:'错误',rev:'复习',dqp:'看释义写英文单词',dqs:'确认',
+    dqok:'✓ 答对了！',dqno:'✗ 正确答案：',ptype:'请输入英文单词',correct:'正确'},
+  en:{hero:'Learn some words?',start:'Start Quiz',streak:'d streak',today:'Today',
+    wb:'Words',wg:'Mistakes',dk:'Practice',pf:'Me',
+    words:'words',wrongs:'wrong',pending:'to clear',quizzes:'quizzes',
+    add:'Add Word',wl:'Word',ml:'Definition (auto-filled)',el:'Example (optional)',cl:'Add Word',
+    ewt:'No words yet',ews:'Tap + to add',nwt:'No mistakes!',nws:'Keep it up!',
+    dkt:'All clear!',dks:'Wrong answers appear here',
+    prac:'Practice',search:'Search…',
+    psl:'Streak',pql:'Quizzes',pal:'Accuracy',
+    pd:'Do',qu:'per day',hl:'History',nh:'History appears after a quiz',
+    ws:'Wrong',rev:'Review',dqp:'Write the English word',dqs:'Submit',
+    dqok:'✓ Correct! ',dqno:'✗ Answer: ',ptype:'Please type the word',correct:'correct'}
+};
+function l(k){return L[isEn?'en':'zh'][k]||k;}
+
+function applyLang(){
+  var S=gs();
+  E('dt-hero').textContent=l('hero');
+  E('dt-sl').textContent=l('start');
+  E('dt-su').textContent=l('streak');
+  E('dt-tl').textContent=l('today');
+  ['wb','wg','dk','pf'].forEach(function(k){var el=E('dt-lbl-'+k);if(el)el.textContent=l(k);});
+  E('dt-t-wb').textContent=l('wb'); E('dt-t-wg').textContent=l('wg');
+  E('dt-t-dk').textContent=l('dk'); E('dt-t-pf').textContent=l('pf');
+  E('dt-prac-btn').textContent=l('prac');
+  E('dt-mt').textContent=l('add'); E('dt-wl').textContent=l('wl');
+  E('dt-ml').textContent=l('ml'); E('dt-el').textContent=l('el'); E('dt-cl').textContent=l('cl');
+  E('dt-ew-t').textContent=l('ewt'); E('dt-ew-s').textContent=l('ews');
+  E('dt-nwt').textContent=l('nwt'); E('dt-nws').textContent=l('nws');
+  E('dt-dkt').textContent=l('dkt'); E('dt-dks').textContent=l('dks');
+  E('dt-psl').textContent=l('psl'); E('dt-pql').textContent=l('pql'); E('dt-pal').textContent=l('pal');
+  E('dt-pd').textContent=l('pd'); E('dt-qu').textContent=l('qu');
+  E('dt-hl').textContent=l('hl'); E('dt-nh').textContent=l('nh');
+  E('dt-search').placeholder=l('search');
+  E('dq-prompt').textContent=l('dqp'); E('dq-btn-text').textContent=l('dqs');
+  E('dt-lang').textContent=isEn?'中':'EN';
+  updateStats();
+}
+function gs(){return window.state||{words:[],wrong:[],history:[],streak:0,todayDone:0,dailyGoal:5};}
+function updateStats(){
+  var S=gs();
+  E('dt-streak').textContent=S.streak; E('dt-today').textContent=S.todayDone+'/'+S.dailyGoal;
+  E('dt-cnt-wb').textContent=S.words.length+' '+l('words');
+  E('dt-cnt-wg').textContent=S.wrong.length+' '+l('wrongs');
+  E('dt-cnt-dk').textContent=S.wrong.length+' '+l('pending');
+  E('dt-cnt-pf').textContent=S.history.length+' '+l('quizzes');
+}
+var curP='home';
+function goto(name){
+  document.querySelectorAll('.dt-panel').forEach(function(p){p.classList.remove('active');});
+  var p=E('dp-'+name);if(p)p.classList.add('active');
+  curP=name;
+  if(name==='wordbook')renderWB();
+  if(name==='wrongbook')renderWG();
+  if(name==='desk')renderDesk();
+  if(name==='profile')renderProfile();
+  if(name==='quiz')startQuizDt();
+  updateStats();
+}
+document.querySelectorAll('[data-goto]').forEach(function(el){
+  el.addEventListener('click',function(){goto(el.dataset.goto);});
+});
+function renderWB(){
+  var S=gs(),q=(E('dt-search').value||'').toLowerCase();
+  var words=S.words.filter(function(w){return !q||w.en.toLowerCase().includes(q)||(w.zh&&w.zh.includes(q));});
+  var grid=E('dt-wg'),emp=E('dt-ew'); grid.innerHTML='';
+  if(!words.length){emp.style.display='flex';return;} emp.style.display='none';
+  words.forEach(function(w,i){
+    var c=document.createElement('div');c.className='word-card';c.style.animationDelay=(i*.04)+'s';
+    c.innerHTML='<div class="word-main"><div class="word-en">'+(w.mastered?'✓ ':'')+w.en+'</div><div class="word-zh">'+(w.zh||'')+'</div>'+(w.example?'<div class="word-ex">'+w.example+'</div>':'')+'</div><div class="word-actions"><button class="word-btn wb-sp">🔊</button><button class="word-btn wb-dl" style="color:var(--bad)">✕</button></div>';
+    grid.appendChild(c);
+    c.querySelector('.wb-sp').onclick=function(){if(window.speak)speak(w.en);};
+    c.querySelector('.wb-dl').onclick=function(){var S=gs();S.words=S.words.filter(function(x){return x.en!==w.en;});if(window.save)save();renderWB();updateStats();};
+  });
+}
+E('dt-search').oninput=renderWB;
+function renderWG(){
+  var S=gs(),grid=E('dt-wrong-g'),emp=E('dt-ewg'); grid.innerHTML='';
+  if(!S.wrong.length){emp.style.display='flex';return;} emp.style.display='none';
+  S.wrong.forEach(function(w,i){
+    var c=document.createElement('div');c.className='word-card';c.style.animationDelay=(i*.04)+'s';
+    c.innerHTML='<div class="word-main"><div class="word-en">'+w.en+'</div><div class="word-zh">'+(w.zh||'')+'</div><div class="word-ex" style="color:var(--bad)">'+l('ws')+' '+(w.count||1)+'×</div></div><div class="word-actions"><button class="word-btn wsp">🔊</button></div>';
+    grid.appendChild(c);
+    c.querySelector('.wsp').onclick=function(){if(window.speak)speak(w.en);};
+  });
+}
+E('dt-prac-btn').onclick=function(){goto('desk');};
+var COLS=['col0','col1','col2','col3','col4','col5'];
+var dBalls=JSON.parse(localStorage.getItem('wd_desk')||'[]');
+var dTrash=parseInt(localStorage.getItem('wd_trash')||'0');
+var aB=null;
+function saveDk(){localStorage.setItem('wd_desk',JSON.stringify(dBalls));localStorage.setItem('wd_trash',String(dTrash));}
+function renderDesk(){
+  var S=gs();
+  S.wrong.forEach(function(w){if(!dBalls.find(function(b){return b.en===w.en;}))dBalls.push({en:w.en,zh:w.zh||'',example:w.example||'',count:w.count||1,col:Math.floor(Math.random()*6)});});
+  dBalls=dBalls.filter(function(b){return S.wrong.find(function(w){return w.en===b.en;});});
+  saveDk(); E('dt-trash').textContent='🗑 '+dTrash;
+  var wrap=E('dt-dw'),emp=E('dt-edk'); wrap.innerHTML='';
+  if(!dBalls.length){emp.style.display='flex';return;} emp.style.display='none';
+  dBalls.forEach(function(ball,i){
+    var el=document.createElement('div'),cnt=ball.count||1,cc=cnt>=3?'cnt3':cnt===2?'cnt2':'cnt1';
+    el.className='word-block '+COLS[ball.col%6]+' '+cc;
+    el.style.cssText='position:static;width:'+(Math.min(120+ball.en.length*8,220))+'px;animation-delay:'+(i*.07)+'s';
+    var pct=Math.min(ball.en.length/18,1)*100;
+    el.innerHTML='<div class="wb-letter">'+ball.en[0].toUpperCase()+'</div><div class="wb-bar"><div class="wb-bar-fill" style="width:'+pct+'%"></div></div>'+(cnt>1?'<div class="wb-count">✗'+cnt+'</div>':'');
+    el.onclick=function(){openDQ(ball,el);}; wrap.appendChild(el);
+  });
+}
+function openDQ(ball,el){
+  aB={ball:ball,el:el};
+  E('dq-prompt').textContent=l('dqp'); E('dq-meaning').textContent=ball.zh||(isEn?'(no definition)':'（无释义）');
+  E('dq-example').textContent=ball.example?'"'+ball.example+'"':'';
+  E('dq-input').value=''; E('dq-feedback').textContent=''; E('dq-feedback').className='dq-feedback';
+  E('dq-btn-text').textContent=l('dqs'); E('dq-title').textContent=l('rev');
+  E('modal-desk-quiz').removeAttribute('hidden'); setTimeout(function(){E('dq-input').focus();},150);
+}
+E('dq-close').onclick=function(){E('modal-desk-quiz').setAttribute('hidden','');aB=null;};
+E('modal-desk-quiz').onclick=function(e){if(e.target===E('modal-desk-quiz')){E('modal-desk-quiz').setAttribute('hidden','');aB=null;}};
+E('dq-submit').onclick=submitDQ; E('dq-input').onkeydown=function(e){if(e.key==='Enter')submitDQ();};
+function submitDQ(){
+  if(!aB)return;
+  var ans=E('dq-input').value.trim(),fb=E('dq-feedback');
+  if(!ans){fb.textContent=l('ptype');fb.className='dq-feedback err';return;}
+  var ok=ans.toLowerCase()===aB.ball.en.toLowerCase();
+  if(ok){
+    fb.textContent=l('dqok')+aB.ball.en; fb.className='dq-feedback ok';
+    E('dq-submit').disabled=true;
+    setTimeout(function(){
+      aB.el.classList.add('fly-away');
+      var en=aB.ball.en;
+      dBalls=dBalls.filter(function(b){return b.en!==en;});
+      var S=gs();S.wrong=S.wrong.filter(function(w){return w.en!==en;});
+      if(window.save)save();dTrash++;saveDk();
+      E('dt-trash').textContent='🗑 '+dTrash;
+      setTimeout(function(){E('modal-desk-quiz').setAttribute('hidden','');if(aB&&aB.el)aB.el.remove();aB=null;E('dq-submit').disabled=false;if(!dBalls.length)E('dt-edk').style.display='flex';updateStats();},440);
+    },700);
+  } else {
+    fb.textContent=l('dqno')+aB.ball.en; fb.className='dq-feedback err';
+    aB.el.classList.remove('shake');void aB.el.offsetWidth;aB.el.classList.add('shake');
+    setTimeout(function(){if(aB)aB.el.classList.remove('shake');},350);
+    aB.ball.count=(aB.ball.count||1)+1;
+    var cnt=aB.ball.count,cc=cnt>=3?'cnt3':cnt===2?'cnt2':'cnt1';
+    aB.el.className='word-block '+COLS[aB.ball.col%6]+' '+cc; aB.el.style.position='static';
+    var ww=gs().wrong.find(function(w){return w.en===aB.ball.en;});if(ww)ww.count=cnt;
+    if(window.save)save();saveDk();E('dq-input').value='';setTimeout(function(){E('dq-input').focus();},150);
+  }
+}
+function startQuizDt(){
+  var S=gs(),body=E('dt-qb');
+  if(!S.words.length){body.innerHTML='<div class="dt-empty"><div class="dt-empty-icon">📚</div><div class="dt-empty-title">'+(isEn?'No words yet':'还没有单词')+'</div><div class="dt-empty-sub">'+(isEn?'Add words first':'先去单词本添加单词')+'</div></div>';return;}
+  if(window.startQuiz)startQuiz();
+  setTimeout(function(){var src=E('quiz-body'),dst=E('dt-qb');if(src&&dst&&src.innerHTML){dst.innerHTML=src.innerHTML;src.innerHTML='';}syncQ();},60);
+}
+function syncQ(){var pf=E('quiz-prog-fill'),dpf=E('dt-pf');if(pf&&dpf)dpf.style.width=pf.style.width;var pt=E('quiz-prog-text'),dpt=E('dt-pt');if(pt&&dpt)dpt.textContent=pt.textContent;var sc=E('quiz-score-badge'),dsc=E('dt-sc');if(sc&&dsc)dsc.textContent=sc.textContent;}
+setInterval(function(){if(curP==='quiz')syncQ();},400);
+E('dt-quit').onclick=function(){goto('home');};
+E('dt-add-btn').onclick=function(){E('dt-modal').removeAttribute('hidden');E('dt-iw').value='';E('dt-im').value='';E('dt-ie').value='';E('dt-iw').focus();};
+E('dt-mc').onclick=function(){E('dt-modal').setAttribute('hidden','');};
+E('dt-modal').onclick=function(e){if(e.target===E('dt-modal'))E('dt-modal').setAttribute('hidden','');};
+var dtLT;
+E('dt-iw').oninput=function(){clearTimeout(dtLT);var w=this.value.trim();if(!w)return;E('dt-ls').textContent=isEn?'Looking up…':'查询中…';dtLT=setTimeout(function(){if(window.lookupWord)lookupWord(w,function(def){E('dt-im').value=def||'';E('dt-ls').textContent=def?(isEn?'✓ Found':'✓ 找到了'):(isEn?'Not found':'未找到');});},600);};
+E('dt-ca').onclick=function(){var en=E('dt-iw').value.trim(),zh=E('dt-im').value.trim(),ex=E('dt-ie').value.trim();if(!en)return;var S=gs();if(!S.words.find(function(w){return w.en.toLowerCase()===en.toLowerCase();})){S.words.push({en:en,zh:zh,example:ex,mastered:false});if(window.save)save();}E('dt-modal').setAttribute('hidden','');renderWB();updateStats();};
+function renderProfile(){
+  var S=gs();E('dt-ps').textContent=S.streak;E('dt-pq').textContent=S.history.length;
+  var acc=S.history.length?Math.round(S.history.reduce(function(a,h){return a+(h.score/h.total);},0)/S.history.length*100)+'%':'—';
+  E('dt-pa').textContent=acc;E('dt-gv').textContent=S.dailyGoal;
+  var hl=E('dt-hist'),nh=E('dt-nh');hl.innerHTML='';
+  if(!S.history.length){nh.style.display='block';return;}nh.style.display='none';
+  S.history.slice(-5).reverse().forEach(function(h){var d=document.createElement('div');d.className='dt-hist-item';d.textContent=h.date+' — '+h.score+'/'+h.total+' '+l('correct');hl.appendChild(d);});
+}
+E('dt-gm').onclick=function(){var S=gs();S.dailyGoal=Math.max(1,S.dailyGoal-1);if(window.save)save();E('dt-gv').textContent=S.dailyGoal;updateStats();};
+E('dt-gp').onclick=function(){var S=gs();S.dailyGoal=Math.min(50,S.dailyGoal+1);if(window.save)save();E('dt-gv').textContent=S.dailyGoal;updateStats();};
+var html=document.documentElement;
+function syncTheme(){E('dt-theme').textContent=html.dataset.theme==='dark'?'☀':'🌙';}
+html.dataset.theme=localStorage.getItem('wd_theme')||'dark';syncTheme();
+E('dt-theme').onclick=function(){html.dataset.theme=html.dataset.theme==='dark'?'light':'dark';localStorage.setItem('wd_theme',html.dataset.theme);syncTheme();};
+if(window.state)window.state.lang=isEn?'en':'zh';
+E('dt-lang').onclick=function(){isEn=!isEn;localStorage.setItem('wd_lang',isEn?'en':'zh');if(window.state)window.state.lang=isEn?'en':'zh';applyLang();if(curP==='wordbook')renderWB();if(curP==='wrongbook')renderWG();if(curP==='desk')renderDesk();if(curP==='profile')renderProfile();};
+E('dt-start-btn').addEventListener('mousemove',function(e){var r=this.getBoundingClientRect();this.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');this.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');});
+E('dt-start-btn').onclick=function(){goto('quiz');};
+var cur2=E('dt-cur'),cx=0,cy=0,tx2=0,ty2=0;
+document.addEventListener('mousemove',function(e){tx2=e.clientX;ty2=e.clientY;});
+(function lp(){cx+=(tx2-cx)*.16;cy+=(ty2-cy)*.16;cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(lp);})();
+document.addEventListener('mouseover',function(e){if(e.target.closest('button,a,.dt-nav-card,.word-card,.word-block'))cur2.classList.add('big');});
+document.addEventListener('mouseout',function(e){if(e.target.closest('button,a,.dt-nav-card,.word-card,.word-block'))cur2.classList.remove('big');});
+applyLang();setTimeout(updateStats,200);setInterval(updateStats,3000);
+})();
+</script>
+<script>
+(function(){
+var c=E('dt-bg')||document.getElementById('dt-bg');
+var gl=c.getContext('webgl')||c.getContext('experimental-webgl');
+function resize(){c.width=innerWidth;c.height=innerHeight;if(gl)gl.viewport(0,0,innerWidth,innerHeight);}
+resize();window.addEventListener('resize',resize);
+if(!gl){c.style.background='linear-gradient(160deg,#07070f,#120a28)';return;}
+var vs='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+var fs='precision highp float;uniform float uT;uniform vec2 uM,uR;float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.1+vec2(1.3,1.7);a*=.5;}return v;}void main(){vec2 uv=gl_FragCoord.xy/uR;float t=uT*.11;vec2 m=uM;float d=length(uv-m);uv+=normalize(uv-m+.001)*(-smoothstep(.75,0.,d)*.16);float nn=fbm(uv*2.2+vec2(t,t*.7))*fbm(uv*1.5-vec2(t*.4,t*.9));nn*=2.;vec3 a=vec3(.026,.018,.09),b=vec3(.09,.05,.28),cc=vec3(.26,.08,.48);vec3 col=nn<1.?mix(mix(a,b,clamp(nn,0.,1.)),cc,0.):mix(cc,a,clamp(nn-1.,0.,1.));col=mix(col,vec3(.04,.18,.10),fbm(uv*1.8+vec2(-t*.3,0.))*.10*(1.-uv.y));col*=1.-smoothstep(.25,.85,length((uv-.5)*1.4))*.55;gl_FragColor=vec4(col,1.);}';
+function sh(t,s){var x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);return x;}
+var p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,vs));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);gl.useProgram(p);
+var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+var al=gl.getAttribLocation(p,'a');gl.enableVertexAttribArray(al);gl.vertexAttribPointer(al,2,gl.FLOAT,false,0,0);
+var uT=gl.getUniformLocation(p,'uT'),uM=gl.getUniformLocation(p,'uM'),uR=gl.getUniformLocation(p,'uR');
+var mx=.5,my=.5,tx=.5,ty=.5,t=0;
+document.addEventListener('mousemove',function(e){tx=e.clientX/innerWidth;ty=1-e.clientY/innerHeight;});
+(function loop(){requestAnimationFrame(loop);t+=.016;mx+=(tx-mx)*.05;my+=(ty-my)*.05;gl.uniform1f(uT,t);gl.uniform2f(uM,mx,my);gl.uniform2f(uR,c.width,c.height);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);})();
+})();
+</script>
+</body>
+</html>
